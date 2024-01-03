@@ -227,10 +227,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .carousel__prev,
 .carousel__next {
-    background-color: rgb(80, 88, 236);
+    background-color: #5058ec !important;
     border-radius: 100%;
     padding: 3px;
 }

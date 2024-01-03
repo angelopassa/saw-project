@@ -117,8 +117,8 @@
 
             <div class="my-10 mx-10 lg:mx-32">
                 <div v-for="(season, idx) in result.seasons">
-                    <div class="flex flex-row bg-indigo-600 justify-between p-4" :class="idx == 0 ? 'rounded-t-md' : ''"
-                        @click="getEpisodes(season.season_number)">
+                    <div class="flex flex-row bg-indigo-600 justify-between p-4"
+                        :class="setupClassNav(idx, season.season_number)" @click="getEpisodes(season.season_number)">
                         <div>
                             <h2 class="text-indigo-100 font-bold">{{ season.season_number }} - {{ season.name }}</h2>
                         </div>
@@ -335,6 +335,14 @@ export default {
             await addToFav(idFilm, filmName, type, poster_path, vote_average);
             this.nSuccess++;
             this.mapSuccess[this.nSuccess] = 1;
+        },
+        setupClassNav(idx: number, sn: number): string {
+            let out: string = '';
+            if (idx == 0)
+                out += 'rounded-t-md';
+            if (idx == (this.result!.seasons.length - 1) && !this.visible[sn])
+                out += 'rounded-b-md';
+            return out;
         }
     },
     components: { Loading, Review, Text, Vote, ToastFail, ToastSuccess }

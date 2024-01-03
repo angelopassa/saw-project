@@ -1,7 +1,7 @@
 <template>
     <Transition name="toast" @after-leave="$emit('finish')">
         <div v-show="added" class="flex w-full fixed bottom-0 bg-green-500 text-white justify-center align-middle p-2">
-            <span class="font-semibold text-sm align-middle">Film aggiunto ai preferiti!</span>
+            <span class="font-semibold text-sm align-middle">Aggiunto ai preferiti!</span>
         </div>
     </Transition>
 </template>
