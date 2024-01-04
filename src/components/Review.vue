@@ -265,7 +265,7 @@ export default {
                 await addReview(this.mediaId, idS, this.titolo, this.comment, new Date(this.data), this.vote, Date.now(), poster, name, type);
 
             url += this.mediaId;
-            this.store.notifySub(idS, url);
+            this.store.notifySub(this.mediaId, url);
             this.reviews = await getReviewById(this.mediaId);
             this.loading = false;
         },
