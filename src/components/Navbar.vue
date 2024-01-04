@@ -18,7 +18,7 @@
                                 </RouterLink>
                             </div>
                             <div class="transition duration-500 hover:bg-indigo-700 p-2 rounded mx-2">
-                                <RouterLink to="/movies" class="py-5 px-2 text-indigo-200 hover:text-indigo-100">Movies
+                                <RouterLink to="/search" class="py-5 px-2 text-indigo-200 hover:text-indigo-100">Cerca
                                 </RouterLink>
                             </div>
                             <div class="transition duration-500 hover:bg-indigo-700 p-2 rounded mx-2" v-if="store.user">
@@ -67,9 +67,9 @@
                 <RouterLink to="/"
                     class="transition duration-500 block py-2 px-4 hover:bg-indigo-700 hover:text-indigo-200 text-indigo-100 p-2 rounded mx-2">
                     Home</RouterLink>
-                <RouterLink to="/movies"
+                <RouterLink to="/search"
                     class="transition duration-500 block py-2 px-4 hover:bg-indigo-700 hover:text-indigo-200 text-indigo-100 p-2 rounded mx-2">
-                    Movies</RouterLink>
+                    Cerca</RouterLink>
                 <RouterLink to="/favourite" v-if="store.user"
                     class="transition duration-500 block py-2 px-4 hover:bg-indigo-700 hover:text-indigo-200 text-indigo-100 p-2 rounded mx-2">
                     Preferiti</RouterLink>

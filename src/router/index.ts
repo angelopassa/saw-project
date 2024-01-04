@@ -20,7 +20,7 @@ const router = createRouter({
       component: Home
     },
     {
-      path: "/movies",
+      path: "/search",
       component: Movies
     },
     {

@@ -5,7 +5,6 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { VitePWA } from 'vite-plugin-pwa'
 import mkcert from 'vite-plugin-mkcert'
-import basicSsl from '@vitejs/plugin-basic-ssl'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,27 +16,10 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       strategies: 'injectManifest',
-      srcDir: '/',
-      filename: 'firebase-messaging-sw.js',
+      srcDir: './',
+      filename: 'firebase-messaging-sw.ts',
       injectManifest: {
         globPatterns: ["**/*"]
-      },
-      workbox: {
-        globPatterns: ["**/*"],
-        navigateFallbackDenylist: [new RegExp("/profile"), new RegExp("/movies"), new RegExp("/signup")],
-        cleanupOutdatedCaches: true,
-        runtimeCaching: [
-          {
-            urlPattern: ({ url }) => url.origin.startsWith("https://api.themoviedb.org"),
-            handler: "NetworkFirst" as const,
-            options: {
-              cacheName: "api-cache",
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          }
-        ]
       },
       includeAssets: ["**/*"],
       manifest: {

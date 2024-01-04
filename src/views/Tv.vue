@@ -339,7 +339,7 @@ export default {
         setupClassNav(idx: number, sn: number): string {
             let out: string = '';
             if (idx == 0)
-                out += 'rounded-t-md';
+                out += 'rounded-t-md ';
             if (idx == (this.result!.seasons.length - 1) && !this.visible[sn])
                 out += 'rounded-b-md';
             return out;

@@ -1,4 +1,16 @@
 {
+  "include": [
+    "*.ts",
+    "src/*.ts",
+    "test/*.ts",
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "skipLibCheck": true,
   "files": [],
   "references": [
     {
@@ -11,6 +23,14 @@
   "compilerOptions": {
     "types": [
       "vite-plugin-pwa/client"
+    ],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": [
+      "ESNext",
+      "DOM",
+      "WebWorker"
     ]
   }
 }

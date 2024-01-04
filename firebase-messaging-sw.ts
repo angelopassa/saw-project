@@ -16,7 +16,7 @@ offlineFallback();
 
 registerRoute(new NavigationRoute(
   createHandlerBoundToURL('index.html'),
-  { denylist: [new RegExp("/profile"), new RegExp("/movies"), new RegExp("/signup"), new RegExp("/restore")] }
+  { denylist: [new RegExp("/profile"), new RegExp("/search"), new RegExp("/signup"), new RegExp("/restore")] }
 ));
 
 registerRoute(
@@ -25,20 +25,6 @@ registerRoute(
     cacheName: 'api-cache'
   })
 );
-
-/*registerRoute(
-  ({ url }) => url.origin.startsWith('https://image.tmdb.org'),
-  new NetworkFirst({
-    cacheName: 'img-api-cache',
-    plugins: [
-      {
-        async fetchDidFail({ request }) {
-          return new Response('Errore nel caricamento della risorsa.', { status: 404, statusText: 'Not Found' });
-        }
-      }
-    ],
-  })
-);*/
 
 self.addEventListener('push', function (event) {
   let dati = event.data.json();
@@ -69,5 +55,5 @@ self.addEventListener('notificationclick', function (event) {
   let notification = event.notification;
   console.log(notification);
   notification.close();
-  event.waitUntil(clients.openWindow(event.notification.data.url));
+  event.waitUntil(self.clients.openWindow(event.notification.data.url));
 });
