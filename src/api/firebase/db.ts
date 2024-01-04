@@ -59,7 +59,6 @@ async function addToFav(idFilm: number, filmName: string, type: string, posterPa
 async function setNotify(id: number | string, flag: boolean): Promise<unknown> {
     let userId: string = useUserStore().user.uid!;
     let data = await getUsersFav();
-    console.log(data);
     (data!)[id].notify = flag;
     return new Promise((res, rej) => {
         try {
@@ -69,10 +68,15 @@ async function setNotify(id: number | string, flag: boolean): Promise<unknown> {
                     if (data[id]) {
                         unsubListener();
                         if (flag)
-                            useUserStore().subToTopic(id.toString());
+                            useUserStore().subToTopic(id.toString())
+                                .then((value: string) => {
+                                    res(value);
+                                });
                         else
-                            useUserStore().unsubFromTopic(id.toString());
-                        res("Success");
+                            useUserStore().unsubFromTopic(id.toString())
+                                .then((value: string) => {
+                                    res(value);
+                                });
                     }
                 })
             });
@@ -216,7 +220,10 @@ async function removeFavById(id: string | number): Promise<unknown> {
                         let data = changes.doc.data();
                         if (!data[id]) {
                             unsubListener();
-                            res("Success");
+                            useUserStore().unsubFromTopic(id.toString())
+                                .then((value: string | void) => {
+                                    value ? res(value) : res("Success")
+                                });
                         }
                     })
                 });

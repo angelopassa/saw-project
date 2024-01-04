@@ -31,7 +31,8 @@
             </div>
             <div class="flex bg-indigo-500 rounded-lg flex-col px-10 py-7 w-full">
                 <div class="flex flex-wrap">
-                    <span v-for="genre in result.genres" class="m-1 text-indigo-50 rounded-md align-middle p-1 font-bold text-sm"
+                    <span v-for="genre in result.genres"
+                        class="m-1 text-indigo-50 rounded-md align-middle p-1 font-bold text-sm"
                         :class="generi[genre.name]">{{
                             genre.name }}
                     </span>
@@ -115,11 +116,15 @@
     </div>
 
     <div v-for="i in nSuccess">
-        <ToastSuccess v-if="mapSuccess[i]" @finish="delete mapSuccess[i]"></ToastSuccess>
+        <ToastSuccess v-if="mapSuccess[i]" @finish="delete mapSuccess[i]">
+            Aggiunto ai preferiti!
+        </ToastSuccess>
     </div>
 
     <div v-for="i in nFail">
-        <ToastFail v-if="mapFail[i]" @finish="delete mapFail[i]"></ToastFail>
+        <ToastFail v-if="mapFail[i]" @finish="delete mapFail[i]">
+            Già presente nei Preferiti!
+        </ToastFail>
     </div>
 </template>
 

@@ -22,10 +22,29 @@ export const useUserStore = defineStore('user', {
         },
         async login(email: string, password: string) {
             try {
+                isSupported()
+                    .then((value) => {
+                        if (value) {
+                            const messaging = getMessaging(fire);
+                            getToken(messaging, { vapidKey: "BPwPKU_nGOjy5OCeSPtk-ETmvrPAfZL_4fmnv-vh1AWo6xQI4IMlbJdnxM736teCVrTRxmuZyYseqUyQ-VO-mWg" })
+                                .catch((error) => null);
+                        }
+                    });
+
                 await signInWithEmailAndPassword(auth, email, password);
                 await getUsersReviews();
                 let fav = await getUsersFav();
-                
+
+                isSupported()
+                    .then((value) => {
+                        if (value) {
+                            const messaging = getMessaging(fire);
+                            getToken(messaging, { vapidKey: "BPwPKU_nGOjy5OCeSPtk-ETmvrPAfZL_4fmnv-vh1AWo6xQI4IMlbJdnxM736teCVrTRxmuZyYseqUyQ-VO-mWg" })
+                                .then((token) => console.log("Token assegnato: ", token))
+                                .catch((error) => console.log("Errore: ", error));
+                        }
+                    });
+
                 for (let id in fav) {
                     if (fav[id].notify)
                         this.subToTopic(id);
@@ -44,7 +63,6 @@ export const useUserStore = defineStore('user', {
                         const messaging = getMessaging(fire);
                         getToken(messaging, { vapidKey: "BPwPKU_nGOjy5OCeSPtk-ETmvrPAfZL_4fmnv-vh1AWo6xQI4IMlbJdnxM736teCVrTRxmuZyYseqUyQ-VO-mWg" })
                             .then((token) => {
-                                console.log("Token Assegnato: ", token);
                                 deleteToken(messaging)
                                     .then(() => {
                                         console.log("Token eliminato con successo!");
@@ -98,41 +116,46 @@ export const useUserStore = defineStore('user', {
                     return error.code;
             }
         },
-        async subToTopic(id: string) {
-            isSupported()
-                .then((value) => {
-                    if (value) {
-                        console.log("Ottimo, il browser supporta FCM!");
+        subToTopic(id: string): Promise<string> {
+            return isSupported()
+                .then((supported) => {
+                    if (supported) {
                         const messaging = getMessaging(fire);
-                        getToken(messaging, { vapidKey: "BPwPKU_nGOjy5OCeSPtk-ETmvrPAfZL_4fmnv-vh1AWo6xQI4IMlbJdnxM736teCVrTRxmuZyYseqUyQ-VO-mWg" })
-                            .then((token) => {
-                                console.log("Token Assegnato: ", token);
-                                subscribeToTopic(token, id)
-                                    .then(() => {
-                                        console.log("Eseguito!");
-                                    });
-                            })
-                            .catch((errore) => {
-                                console.log("Errore: ", errore);
-                            });
+                        return getToken(messaging, { vapidKey: "BPwPKU_nGOjy5OCeSPtk-ETmvrPAfZL_4fmnv-vh1AWo6xQI4IMlbJdnxM736teCVrTRxmuZyYseqUyQ-VO-mWg" });
+                    } else {
+                        throw new FirebaseError("messaging/not-supported", "Il browser non supporta FCM");
                     }
                 })
+                .then((token) => {
+                    return subscribeToTopic(token, id);
+                })
+                .then(() => {
+                    console.log("Eseguito!");
+                    return 'Success';
+                })
                 .catch((error) => {
-                    console.log("Errore: ", error);
+                    return error instanceof FirebaseError ? error.code : error;
                 });
         },
-        async unsubFromTopic(id: string) {
-            const messaging = getMessaging(fire);
-            getToken(messaging, { vapidKey: "BPwPKU_nGOjy5OCeSPtk-ETmvrPAfZL_4fmnv-vh1AWo6xQI4IMlbJdnxM736teCVrTRxmuZyYseqUyQ-VO-mWg" })
-                .then((token) => {
-                    console.log("Token Assegnato: ", token);
-                    unSubscribeFromTopic(token, id)
-                        .then(() => {
-                            console.log("Eseguito!");
-                        });
+        unsubFromTopic(id: string): Promise<string> {
+            return isSupported()
+                .then((supported) => {
+                    if (supported) {
+                        const messaging = getMessaging(fire);
+                        return getToken(messaging, { vapidKey: "BPwPKU_nGOjy5OCeSPtk-ETmvrPAfZL_4fmnv-vh1AWo6xQI4IMlbJdnxM736teCVrTRxmuZyYseqUyQ-VO-mWg" });
+                    } else {
+                        throw new FirebaseError("messaging/not-supported", "Il browser non supporta FCM");
+                    }
                 })
-                .catch((errore) => {
-                    console.log("Errore: ", errore);
+                .then((token) => {
+                    return unSubscribeFromTopic(token, id);
+                })
+                .then(() => {
+                    console.log("Eseguito!");
+                    return 'Success';
+                })
+                .catch((error) => {
+                    return error instanceof FirebaseError ? error.code : error;
                 });
         },
         async notifySub(id: string, url: string) {
@@ -160,8 +183,8 @@ export const useUserStore = defineStore('user', {
                 body: JSON.stringify(payload)
             })
                 .then(response => response.json())
-                .then(data => console.log('Messaggio inviato con successo:', data))
-                .catch(error => console.error('Errore durante l\'invio del messaggio:', error));
+                .then(data => console.log("Messaggio inviato con successo:", data))
+                .catch(error => console.error("Errore durante l'invio del messaggio:", error));
 
         }
     }
@@ -177,7 +200,7 @@ const subscribeToTopic = async (token: any, topic: string) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `key=AAAAohAHtFI:APA91bEkU5UgXZKqQWYq6_wnBTqJF8sTX2_hA7pVpuoxjLQnf66yiWhlff2zFvoNUMFWHphY7CvRXoi6aUrHyL-Y3gdAgDG6Aw1unLFllZXyNE3zOQEF2aofRcMsf-dIaAuGOFOcoUTM`, // Sostituisci con la tua chiave del server
+            'Authorization': `key=AAAAohAHtFI:APA91bEkU5UgXZKqQWYq6_wnBTqJF8sTX2_hA7pVpuoxjLQnf66yiWhlff2zFvoNUMFWHphY7CvRXoi6aUrHyL-Y3gdAgDG6Aw1unLFllZXyNE3zOQEF2aofRcMsf-dIaAuGOFOcoUTM`,
         },
     });
 
@@ -194,7 +217,7 @@ const unSubscribeFromTopic = async (token: any, topic: string) => {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `key=AAAAohAHtFI:APA91bEkU5UgXZKqQWYq6_wnBTqJF8sTX2_hA7pVpuoxjLQnf66yiWhlff2zFvoNUMFWHphY7CvRXoi6aUrHyL-Y3gdAgDG6Aw1unLFllZXyNE3zOQEF2aofRcMsf-dIaAuGOFOcoUTM`, // Sostituisci con la tua chiave del server
+            'Authorization': `key=AAAAohAHtFI:APA91bEkU5UgXZKqQWYq6_wnBTqJF8sTX2_hA7pVpuoxjLQnf66yiWhlff2zFvoNUMFWHphY7CvRXoi6aUrHyL-Y3gdAgDG6Aw1unLFllZXyNE3zOQEF2aofRcMsf-dIaAuGOFOcoUTM`,
         },
     });
 

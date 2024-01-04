@@ -98,11 +98,15 @@
     </div>
 
     <div v-for="i in nSuccess">
-        <ToastSuccess v-if="mapSuccess[i]" @finish="delete mapSuccess[i]"></ToastSuccess>
+        <ToastSuccess v-if="mapSuccess[i]" @finish="delete mapSuccess[i]">
+            Aggiunto ai preferiti!
+        </ToastSuccess>
     </div>
 
     <div v-for="i in nFail">
-        <ToastFail v-if="mapFail[i]" @finish="delete mapFail[i]"></ToastFail>
+        <ToastFail v-if="mapFail[i]" @finish="delete mapFail[i]">
+            Già presente nei Preferiti!
+        </ToastFail>
     </div>
 </template>
 
@@ -203,7 +207,6 @@ export default {
                 if (result)
                     this.tv = this.tv.concat(result.results);
             }
-
         },
         async updateUpComing() {
             if (this.pageLoadedUpcoming != this.nPageUpcoming) {
@@ -211,7 +214,6 @@ export default {
                 if (result)
                     this.upcoming = this.upcoming.concat(result.results);
             }
-
         }
     },
     components: {

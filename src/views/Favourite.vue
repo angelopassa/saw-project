@@ -187,18 +187,37 @@
             </div>
         </div>
     </div>
+
+    <div v-for="i in nSuccess">
+        <ToastSuccess v-if="mapSuccess[i]" @finish="delete mapSuccess[i]">
+            Preferenza salvata ed iscritto alle notifiche su questo media
+        </ToastSuccess>
+    </div>
+
+    <div v-for="i in nFail">
+        <ToastFail v-if="mapFail[i]" @finish="delete mapFail[i]">
+            {{ failMessage }}
+        </ToastFail>
+    </div>
 </template>
 
 <script lang="ts">
 import { getUsersFav, removeFavById, setNotify } from '@/api/firebase/db';
 import type { DocumentData } from 'firebase/firestore';
 import Vote from '@/components/Vote.vue';
+import ToastFail from "@/components/ToastFail.vue";
+import ToastSuccess from "@/components/ToastSuccess.vue";
 export default {
     data() {
         return {
             fav: null as DocumentData | null,
-            loading: true,
-            noNet: false
+            loading: true as boolean,
+            noNet: false as boolean,
+            nSuccess: 0 as number,
+            nFail: 0 as number,
+            mapSuccess: {} as { [key: number]: number },
+            mapFail: {} as { [key: number]: number },
+            failMessage: "" as string
         }
     },
     async created() {
@@ -217,9 +236,19 @@ export default {
             }
         },
         async setNotifyFav(id: number | string, flag: boolean) {
-            await setNotify(id, flag);
+            let res = await setNotify(id, flag);
+            if (res == "Success") {
+                this.nSuccess++;
+                this.mapSuccess[this.nSuccess] = 1;
+                return;
+            } else if (res == "messaging/permission-blocked")
+                this.failMessage = "Preferenza salvata ma per ricevere le notifiche è necessario fornire l'autorizzazione";
+            else
+                this.failMessage = "Preferenza salvata ma per iscriversi alla ricezione delle notifiche occorre essere online";
+            this.nFail++;
+            this.mapFail[this.nFail] = 1;
         }
     },
-    components: { Vote }
+    components: { Vote, ToastFail, ToastSuccess }
 }
 </script>

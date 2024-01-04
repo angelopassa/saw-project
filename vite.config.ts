@@ -479,11 +479,7 @@ export default defineConfig({
             "sizes": "1024x1024"
           }
         ]
-      },
-      /*devOptions: {
-        enabled: true,
-        type: 'module'
-      }*/
+      }
     })
   ],
   resolve: {
