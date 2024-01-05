@@ -6,7 +6,6 @@ import { offlineFallback } from 'workbox-recipes';
 
 self.skipWaiting();
 clientsClaim();
-
 cleanupOutdatedCaches();
 
 precacheAndRoute(self.__WB_MANIFEST);

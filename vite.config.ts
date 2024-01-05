@@ -14,7 +14,7 @@ export default defineConfig({
     mkcert(),
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'auto',
+      injectRegister: null,
       strategies: 'injectManifest',
       srcDir: './',
       filename: 'firebase-messaging-sw.ts',

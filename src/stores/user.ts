@@ -23,17 +23,6 @@ export const useUserStore = defineStore('user', {
         async login(email: string, password: string) {
             try {
 
-                while (navigator.serviceWorker.controller?.state != "activated");
-                
-                isSupported()
-                    .then((value) => {
-                        if (value) {
-                            const messaging = getMessaging(fire);
-                            getToken(messaging, { vapidKey: "BPwPKU_nGOjy5OCeSPtk-ETmvrPAfZL_4fmnv-vh1AWo6xQI4IMlbJdnxM736teCVrTRxmuZyYseqUyQ-VO-mWg" })
-                                .catch((error) => null);
-                        }
-                    });
-
                 await signInWithEmailAndPassword(auth, email, password);
                 await getUsersReviews();
                 let fav = await getUsersFav();
@@ -43,15 +32,15 @@ export const useUserStore = defineStore('user', {
                         if (value) {
                             const messaging = getMessaging(fire);
                             getToken(messaging, { vapidKey: "BPwPKU_nGOjy5OCeSPtk-ETmvrPAfZL_4fmnv-vh1AWo6xQI4IMlbJdnxM736teCVrTRxmuZyYseqUyQ-VO-mWg" })
-                                .then((token) => console.log("Token assegnato: ", token))
-                                .catch((error) => console.log("Errore: ", error));
+                                .then((token) => {
+                                    console.log("Token assegnato: ", token);
+                                    for (let id in fav) {
+                                        if (fav[id].notify)
+                                            this.subToTopic(id);
+                                    }
+                                })
                         }
                     });
-
-                for (let id in fav) {
-                    if (fav[id].notify)
-                        this.subToTopic(id);
-                }
 
             } catch (error: unknown) {
                 if (error instanceof FirebaseError)
@@ -199,6 +188,7 @@ onAuthStateChanged(auth, (user) => {
 });
 
 const subscribeToTopic = async (token: any, topic: string) => {
+    console.log(token);
     const response = await fetch(`https://iid.googleapis.com/iid/v1/${token}/rel/topics/${topic}`, {
         method: 'POST',
         headers: {

@@ -6,22 +6,12 @@
   <link rel="icon" href="/favicon.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your Movie Lib</title>
+  <script src="/registerSW.js"></script>
 </head>
 
 <body>
   <div class="relative" id="app"></div>
   <script type="module" src="/src/main.ts"></script>
-  <script>
-    /*if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('firebase-messaging-sw.js')
-        .then((registration) => {
-          console.log('Service Worker registrato con successo:', registration);
-        })
-        .catch((error) => {
-          console.error('Errore durante la registrazione del Service Worker:', error);
-        });
-    }*/
-  </script>
 </body>
 
 </html>
