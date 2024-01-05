@@ -17,7 +17,7 @@
 
         <div v-if="result" v-show="!loading && !noNet">
             <div class="flex my-5 md:mx-20 p-5 flex-col lg:flex-row justify-center">
-                <div class="flex mr-5 min-w-max justify-center mb-5 lg:mb-0 items-center">
+                <div class="flex lg:mr-5 min-w-max justify-center mb-5 lg:mb-0 items-center">
                     <img v-if="result.poster_path" :src="'https://image.tmdb.org/t/p/w300' + result.poster_path" alt=""
                         class="rounded-lg">
                     <div v-else class="flex justify-center rounded-xl bg-gray-200 items-center">

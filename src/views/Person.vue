@@ -16,7 +16,7 @@
 
         <div v-if="person_info" v-show="!loading && !noNet">
             <div class="flex my-5 md:mx-20 p-5 flex-col lg:flex-row justify-center">
-                <div class="flex mr-5 min-w-max justify-center mb-5 lg:mb-0 items-center">
+                <div class="flex lg:mr-5 min-w-max justify-center mb-5 lg:mb-0 items-center">
                     <img v-if="person_info.profile_path" :src="'https://image.tmdb.org/t/p/w300' + person_info.profile_path"
                         alt="" class="rounded-lg">
                     <div v-else class="flex justify-center rounded-xl bg-gray-200 items-center">
@@ -67,7 +67,7 @@
                         </svg>
                     </div>
                 </h1>
-                <div v-show="visibleFilm" class="grid grid-cols-10 justify-center">
+                <div v-show="visibleFilm" class="grid lg:grid-cols-10 justify-center md:grid-cols-7 sm:grid-cols-5 grid-cols-4">
                     <div v-for="movie in movies" class="flex m-2 flex-col">
                         <RouterLink :to="'/movie/' + movie.id">
                             <img v-if="movie.poster_path" :src="'https://image.tmdb.org/t/p/original' + movie.poster_path"
@@ -102,7 +102,7 @@
                         </svg>
                     </div>
                 </h1>
-                <div v-show="visibleTv" class="justify-center grid grid-cols-10">
+                <div v-show="visibleTv" class="grid lg:grid-cols-10 justify-center md:grid-cols-7 sm:grid-cols-5 grid-cols-4">
                     <div v-for="serie in tv" class="flex m-2 flex-col">
                         <RouterLink :to="'/tv/' + serie.id">
                             <img v-if="serie.poster_path" :src="'https://image.tmdb.org/t/p/original' + serie.poster_path"

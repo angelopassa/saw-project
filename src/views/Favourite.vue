@@ -133,7 +133,7 @@
             </div>
 
             <div class="block md:hidden">
-                <div class="grid grid-cols-1 gap-4">
+                <div class="grid grid-cols-1 gap-4 mx-1.5">
                     <div v-for="(item, index) in fav" class="rounded-xl bg-white shadow-xl">
                         <div class="flex flex-col">
                             <div class="flex flex-row w-full h-full">

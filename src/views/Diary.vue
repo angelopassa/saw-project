@@ -133,7 +133,7 @@
             </div>
 
             <div class="block md:hidden">
-                <div class="grid grid-cols-1 gap-4">
+                <div class="grid grid-cols-1 gap-4 mx-1.5">
                     <div v-for="item in diary" class="rounded-xl bg-white shadow-xl">
                         <div class="flex flex-col w-full">
                             <div class="p-4 flex flex-col w-full">

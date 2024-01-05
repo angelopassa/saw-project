@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from "@/stores/user"
 
 import Home from "../views/Home.vue";
-import Movies from "../views/Movies.vue";
+import Search from "../views/Search.vue";
 import Movie from "../views/Movie.vue";
 import Tv from "../views/Tv.vue";
 import Person from "../views/Person.vue";
@@ -21,7 +21,7 @@ const router = createRouter({
     },
     {
       path: "/search",
-      component: Movies
+      component: Search
     },
     {
       name: "movie",

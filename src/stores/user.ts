@@ -22,6 +22,9 @@ export const useUserStore = defineStore('user', {
         },
         async login(email: string, password: string) {
             try {
+
+                while (navigator.serviceWorker.controller?.state != "activated");
+                
                 isSupported()
                     .then((value) => {
                         if (value) {
@@ -116,7 +119,7 @@ export const useUserStore = defineStore('user', {
                     return error.code;
             }
         },
-        subToTopic(id: string): Promise<string> {
+        async subToTopic(id: string): Promise<string> {
             return isSupported()
                 .then((supported) => {
                     if (supported) {
@@ -137,7 +140,7 @@ export const useUserStore = defineStore('user', {
                     return error instanceof FirebaseError ? error.code : error;
                 });
         },
-        unsubFromTopic(id: string): Promise<string> {
+        async unsubFromTopic(id: string): Promise<string> {
             return isSupported()
                 .then((supported) => {
                     if (supported) {
