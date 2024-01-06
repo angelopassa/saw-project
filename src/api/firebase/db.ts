@@ -192,30 +192,26 @@ async function getReviewByIdMediaAndUser(id: string): Promise<DocumentData> {
     return res[0];
 }
 
-async function removeFavById(id: string | number): Promise<unknown> {
-    try {
-        let userId: string = useUserStore().user.uid!;
-        return new Promise((res, rej) => {
-            try {
-                let unsubListener: Unsubscribe = onSnapshot(query(collection(db, favCollName), where("__name__", "==", userId)), {}, (snapshot) => {
-                    snapshot.docChanges().forEach((changes) => {
-                        let data = changes.doc.data();
-                        if (!data[id]) {
-                            unsubListener();
-                            setSubscription(id.toString(), false)
-                                .then((response) => res(response))
-                                .catch((error) => rej(error));
-                        }
-                    })
-                });
-                updateDoc(doc(db, favCollName, userId), { [id]: deleteField() });
-            } catch (error: unknown) {
-                rej(error);
-            }
-        });
-    } catch (error: unknown) {
-        return error;
-    }
+async function removeFavById(id: string | number): Promise<{ message: string, fromCache: boolean }> {
+    let userId: string = useUserStore().user.uid!;
+    return new Promise((res, rej) => {
+        try {
+            let unsubListener: Unsubscribe = onSnapshot(query(collection(db, favCollName), where("__name__", "==", userId)), {}, (snapshot) => {
+                snapshot.docChanges().forEach((changes) => {
+                    let data = changes.doc.data();
+                    if (!data[id]) {
+                        unsubListener();
+                        setSubscription(id.toString(), false)
+                            .then((response) => res(response))
+                            .catch((error) => rej(error));
+                    }
+                })
+            });
+            updateDoc(doc(db, favCollName, userId), { [id]: deleteField() });
+        } catch (error: unknown) {
+            rej(error);
+        }
+    });
 }
 
 async function getUsersReviews(order?: string, up?: OrderByDirection): Promise<DocumentData[]> {

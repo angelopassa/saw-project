@@ -236,7 +236,7 @@ export default {
         async removeFav(id: number | string) {
             this.loading = true;
             let res = await removeFavById(id);
-            if (res == "Success") {
+            if (res.message == "Success") {
                 this.fav = await getUsersFav();
                 this.loading = false;
             }
