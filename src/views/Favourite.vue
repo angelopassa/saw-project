@@ -190,7 +190,7 @@
 
     <div v-for="i in nSuccess">
         <ToastSuccess v-if="mapSuccess[i]" @finish="delete mapSuccess[i]">
-            Preferenza salvata ed iscritto alle notifiche su questo media
+            {{ successMessage }}
         </ToastSuccess>
     </div>
 
@@ -203,11 +203,16 @@
 
 <script lang="ts">
 import { getUsersFav, removeFavById, setNotify } from '@/api/firebase/db';
+import { useUserStore } from "@/stores/user";
 import type { DocumentData } from 'firebase/firestore';
 import Vote from '@/components/Vote.vue';
 import ToastFail from "@/components/ToastFail.vue";
 import ToastSuccess from "@/components/ToastSuccess.vue";
 export default {
+    setup() {
+        const userStore = useUserStore();
+        return { userStore }
+    },
     data() {
         return {
             fav: null as DocumentData | null,
@@ -217,7 +222,8 @@ export default {
             nFail: 0 as number,
             mapSuccess: {} as { [key: number]: number },
             mapFail: {} as { [key: number]: number },
-            failMessage: "" as string
+            failMessage: "" as string,
+            successMessage: "" as string
         }
     },
     async created() {
@@ -237,14 +243,38 @@ export default {
         },
         async setNotifyFav(id: number | string, flag: boolean) {
             let res = await setNotify(id, flag);
-            if (res == "Success") {
-                this.nSuccess++;
-                this.mapSuccess[this.nSuccess] = 1;
-                return;
-            } else if (res == "messaging/permission-blocked")
-                this.failMessage = "Preferenza salvata ma per ricevere le notifiche è necessario fornire l'autorizzazione";
+            if (res.message == "Success") {
+                flag ? this.successMessage = "Preferenza salvata ed iscritto alle notifiche su questo media" : this.successMessage = "Preferenza salvata ed discritto alle notifiche su questo media";
+
+                if (flag) {
+                    if (Notification.permission != "granted")
+                        return Notification.requestPermission()
+                            .then((value) => {
+                                if (value != 'granted') {
+                                    this.failMessage = "Preferenza salvata ma per ricevere le notifiche è necessario fornire l'autorizzazione";
+                                    this.nFail++;
+                                    this.mapFail[this.nFail] = 1;
+                                }
+                                else {
+                                    this.nSuccess++;
+                                    this.mapSuccess[this.nSuccess] = 1;
+                                }
+                            })
+                    if (!res.fromCache) {
+                        this.nSuccess++;
+                        this.mapSuccess[this.nSuccess] = 1;
+                        return;
+                    }
+                    this.failMessage = "Preferenza salvata ma per ricevere le notifiche occorre essere online";
+                } else {
+                    this.nSuccess++;
+                    this.mapSuccess[this.nSuccess] = 1;
+                    return;
+                }
+            }
             else
-                this.failMessage = "Preferenza salvata ma per iscriversi alla ricezione delle notifiche occorre essere online";
+                this.failMessage = res.message;
+
             this.nFail++;
             this.mapFail[this.nFail] = 1;
         }

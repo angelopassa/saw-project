@@ -1,12 +1,15 @@
-import { db } from './config'
-import { Timestamp, addDoc, doc, getDoc, setDoc, collection, query, where, getDocs, type DocumentData, updateDoc, deleteDoc, orderBy, type OrderByDirection, onSnapshot } from 'firebase/firestore'
+import { db } from './config';
+import { Timestamp, addDoc, doc, getDoc, setDoc, collection, query, where, getDocs, type DocumentData, updateDoc, deleteDoc, orderBy, type OrderByDirection, onSnapshot, deleteField, arrayRemove, arrayUnion } from 'firebase/firestore';
 import { useUserStore } from '@/stores/user';
-import type { Unsubscribe } from 'firebase/database';
+import { type Unsubscribe } from 'firebase/database';
 import _ from "lodash";
 
 const favCollName = 'preferiti';
 const reviewCollName = 'recensioni';
 const userCollName = 'utenti';
+const notifyCollName = 'notifiche';
+
+let datafromCache = true;
 
 async function getUserInfo(uid: string) {
 
@@ -56,10 +59,8 @@ async function addToFav(idFilm: number, filmName: string, type: string, posterPa
     });
 }
 
-async function setNotify(id: number | string, flag: boolean): Promise<unknown> {
+async function setNotify(id: number | string, flag: boolean): Promise<{ message: string, fromCache: boolean }> {
     let userId: string = useUserStore().user.uid!;
-    let data = await getUsersFav();
-    (data!)[id].notify = flag;
     return new Promise((res, rej) => {
         try {
             let unsubListener: Unsubscribe = onSnapshot(query(collection(db, favCollName), where("__name__", "==", userId)), {}, (snapshot) => {
@@ -67,19 +68,17 @@ async function setNotify(id: number | string, flag: boolean): Promise<unknown> {
                     let data = changes.doc.data();
                     if (data[id]) {
                         unsubListener();
-                        if (flag)
-                            useUserStore().subToTopic(id.toString())
-                                .then((value: string) => {
-                                    res(value);
-                                });
-                        else
-                            useUserStore().unsubFromTopic(id.toString())
-                                .then((value: string) => {
-                                    res(value);
-                                });
+                        setSubscription(id.toString(), flag)
+                            .then((response) => res(response))
+                            .catch((error) => rej(error));
                     }
                 })
             });
+            let data = {
+                [id]: {
+                    notify: flag
+                }
+            }
             setDoc(doc(db, favCollName, userId), data, { merge: true });
         } catch (error) {
             rej(error);
@@ -92,6 +91,7 @@ async function getUsersFav(): Promise<DocumentData | null> {
         let userId: string = useUserStore().user.uid!;
         onSnapshot(doc(db, favCollName, userId), { includeMetadataChanges: true }, (snapshot) => {
             console.log("Dalla cache: ", snapshot.metadata.fromCache);
+            datafromCache = snapshot.metadata.fromCache;
         });
         let docum = await getDoc(doc(db, favCollName, userId));
         if (docum.exists()) return docum.data();
@@ -133,11 +133,9 @@ async function addReview(idPage: string, idMedia: string, titleRev: string, desc
             try {
                 let unsubListener: Unsubscribe = onSnapshot(collection(db, reviewCollName), {}, (snapshot) => {
                     snapshot.docChanges().forEach((changes) => {
-                        console.log("1", changes.doc)
                         let dataC = changes.doc.data();
                         console.log(dataC, data, JSON.stringify(dataC) == JSON.stringify(data), _.isEqual(dataC, data));
                         if (_.isEqual(dataC, data)) {
-                            console.log("eseguito");
                             unsubListener();
                             res("Success");
                         }
@@ -158,29 +156,13 @@ async function addReview(idPage: string, idMedia: string, titleRev: string, desc
     }
 }
 
-/*type Review = {
-    userId: string,
-    userName: string,
-    dataRev: Timestamp,
-    dataVis: Timestamp,
-    idPage: string,
-    idMedia: string,
-    desc: string,
-    titleRev: string,
-    nameMedia: string,
-    vote: number,
-    season: string | null,
-    episode: string | null,
-    type: string,
-    posterPath: string
-}*/
-
 async function getReviewById(id: string): Promise<DocumentData[]> {
     try {
         let res: DocumentData[] = [];
         const q = query(collection(db, reviewCollName), where("idPage", "==", id));
         onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
             console.log("Dalla cache: ", snapshot.metadata.fromCache);
+            datafromCache = snapshot.metadata.fromCache;
         });
         let docum = await getDocs(q);
         docum.forEach(async (doc) => {
@@ -203,6 +185,7 @@ async function getReviewByIdMediaAndUser(id: string): Promise<DocumentData> {
     const q = query(collection(db, reviewCollName), where("idMedia", "==", id), where("userId", "==", userId));
     onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
         console.log("Dalla cache: ", snapshot.metadata.fromCache);
+        datafromCache = snapshot.metadata.fromCache;
     });
     let docum = await getDocs(q);
     docum.forEach(doc => res.push(doc.data()));
@@ -212,7 +195,6 @@ async function getReviewByIdMediaAndUser(id: string): Promise<DocumentData> {
 async function removeFavById(id: string | number): Promise<unknown> {
     try {
         let userId: string = useUserStore().user.uid!;
-        let docum = await getDoc(doc(db, favCollName, userId));
         return new Promise((res, rej) => {
             try {
                 let unsubListener: Unsubscribe = onSnapshot(query(collection(db, favCollName), where("__name__", "==", userId)), {}, (snapshot) => {
@@ -220,18 +202,13 @@ async function removeFavById(id: string | number): Promise<unknown> {
                         let data = changes.doc.data();
                         if (!data[id]) {
                             unsubListener();
-                            useUserStore().unsubFromTopic(id.toString())
-                                .then((value: string | void) => {
-                                    value ? res(value) : res("Success")
-                                });
+                            setSubscription(id.toString(), false)
+                                .then((response) => res(response))
+                                .catch((error) => rej(error));
                         }
                     })
                 });
-                if (docum.exists()) {
-                    let data = docum.data();
-                    delete data[id];
-                    setDoc(doc(db, favCollName, userId), data);
-                }
+                updateDoc(doc(db, favCollName, userId), { [id]: deleteField() });
             } catch (error: unknown) {
                 rej(error);
             }
@@ -252,6 +229,7 @@ async function getUsersReviews(order?: string, up?: OrderByDirection): Promise<D
 
     onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
         console.log("Dalla cache: ", snapshot.metadata.fromCache);
+        datafromCache = snapshot.metadata.fromCache;
     });
     let docum = await getDocs(q);
     docum.forEach(doc => res.push(doc.data()));
@@ -297,7 +275,72 @@ async function deleteAccount(uid: string) {
     await deleteDoc(doc(db, userCollName, uid));
 }
 
+async function storeToken(token: string) {
+    let userId: string = useUserStore().user.uid!;
+    await setDoc(doc(db, notifyCollName, userId), { tokens: arrayUnion(token) }, { merge: true });
+}
+
+async function setSubscription(idMedia: string, flag: boolean): Promise<{ message: string, fromCache: boolean }> {
+    let userId: string = useUserStore().user.uid!;
+    let data = {
+        [idMedia]: flag
+    };
+    return new Promise((res, rej) => {
+        try {
+            let unsubListener: Unsubscribe = onSnapshot(doc(db, notifyCollName, userId), {}, (snapshot) => {
+                if (snapshot.data()![idMedia] == flag) {
+                    unsubListener();
+                    res({ message: "Success", fromCache: datafromCache });
+                }
+            });
+            setDoc(doc(db, notifyCollName, userId), data, { merge: true });
+        } catch (error) {
+            rej(error);
+        }
+    });
+
+}
+
+async function getTokensByIdMedia(idMedia: string) {
+    let q = query(collection(db, notifyCollName), where(idMedia, "==", true));
+    let d = await getDocs(q);
+    let tokens: string[] = [];
+
+    d.docs.forEach(data => {
+        tokens = tokens.concat(data.data().tokens)
+    });
+
+    return tokens;
+}
+
+async function deleteTokenDbByUser(token: string) {
+    let userId: string = useUserStore().user.uid!;
+
+    return new Promise((res, rej) => {
+        try {
+            let unsubListener: Unsubscribe = onSnapshot(doc(db, notifyCollName, userId), {}, (snapshot) => {
+                if (!snapshot.data()!.tokens.includes(token)) {
+                    unsubListener();
+                    res("Success");
+                }
+            });
+            setDoc(doc(db, notifyCollName, userId), { tokens: arrayRemove(token) }, { merge: true });
+        } catch (error) {
+            rej(error);
+        }
+    });
+}
+
+async function deleteTokenDb(token: string) {
+    let q = query(collection(db, notifyCollName), where("tokens", "array-contains", token));
+    let d = await getDocs(q);
+    d.forEach((docum) => {
+        setDoc(docum.ref, { tokens: arrayRemove(token) }, { merge: true });
+    });
+}
+
 export {
     addToFav, getUsersFav, addReview, getReviewById, isPresentFav, removeFavById, getUsersReviews, getReviewByIdMediaAndUser,
-    removeReview, deleteAccount, addUsersInfo, getUserInfo, updateUserDisplayName, setNotify
+    removeReview, deleteAccount, addUsersInfo, getUserInfo, updateUserDisplayName, setNotify, setSubscription,
+    getTokensByIdMedia, deleteTokenDb, storeToken, deleteTokenDbByUser
 }
