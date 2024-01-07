@@ -1,7 +1,7 @@
 import { cleanupOutdatedCaches, precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { clientsClaim } from 'workbox-core';
 import { registerRoute, NavigationRoute, setDefaultHandler } from 'workbox-routing';
-import { NetworkFirst } from 'workbox-strategies';
+import { NetworkFirst, NetworkOnly } from 'workbox-strategies';
 import { offlineFallback } from 'workbox-recipes';
 
 self.skipWaiting();
@@ -10,7 +10,7 @@ cleanupOutdatedCaches();
 
 precacheAndRoute(self.__WB_MANIFEST);
 
-setDefaultHandler(new NetworkFirst());
+setDefaultHandler(new NetworkOnly());
 offlineFallback();
 
 registerRoute(new NavigationRoute(
