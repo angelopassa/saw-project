@@ -90,7 +90,6 @@ async function getUsersFav(): Promise<{ data: DocumentData | null, fromCache: bo
     try {
         let userId: string = useUserStore().user.uid!;
         onSnapshot(doc(db, favCollName, userId), { includeMetadataChanges: true }, (snapshot) => {
-            console.log("Dalla cache: ", snapshot.metadata.fromCache);
             datafromCache = snapshot.metadata.fromCache;
         });
         let docum = await getDoc(doc(db, favCollName, userId));
@@ -102,8 +101,8 @@ async function getUsersFav(): Promise<{ data: DocumentData | null, fromCache: bo
 }
 
 async function isPresentFav(id: string): Promise<boolean> {
-    let data = await getUsersFav();
-    for (let idx in data)
+    let fav = await getUsersFav();
+    for (let idx in fav.data)
         if (idx == id) return true;
     return false;
 }
@@ -161,7 +160,6 @@ async function getReviewById(id: string): Promise<DocumentData[]> {
         let res: DocumentData[] = [];
         const q = query(collection(db, reviewCollName), where("idPage", "==", id));
         onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
-            console.log("Dalla cache: ", snapshot.metadata.fromCache);
             datafromCache = snapshot.metadata.fromCache;
         });
         let docum = await getDocs(q);
@@ -184,7 +182,6 @@ async function getReviewByIdMediaAndUser(id: string): Promise<DocumentData> {
     let res: DocumentData[] = [];
     const q = query(collection(db, reviewCollName), where("idMedia", "==", id), where("userId", "==", userId));
     onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
-        console.log("Dalla cache: ", snapshot.metadata.fromCache);
         datafromCache = snapshot.metadata.fromCache;
     });
     let docum = await getDocs(q);
@@ -224,7 +221,6 @@ async function getUsersReviews(order?: string, up?: OrderByDirection): Promise<{
         q = query(collection(db, reviewCollName), where("userId", "==", userId));
 
     onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
-        console.log("Dalla cache: ", snapshot.metadata.fromCache);
         datafromCache = snapshot.metadata.fromCache;
     });
     let docum = await getDocs(q);

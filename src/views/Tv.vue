@@ -67,10 +67,15 @@
                     <span class="font-sm text-indigo-50 text-justify mt-5 bg-indigo-600 rounded-lg p-5">
                         <Text :text="result.overview"></Text>
                     </span>
-                    <div class="flex flex-row mt-5">
+                    <span
+                        class="flex items-center gap-2 text-xs font-bold bg-indigo-600 p-1.5 pl-2.5 rounded-l-md rounded-r-3xl mt-5 mb-5 text-indigo-50 w-fit">
+                        <span>Voto TMDB</span>
+                        <Vote :vote="result.vote_average"></Vote>
+                    </span>
+                    <div class="flex flex-row">
                         <span class="flex text-indigo-100 font-semibold mr-5">Creata da:</span>
                         <div class="flex flex-wrap justify-center">
-                            <span v-for="(person, idx) in result.created_by" class="mr-5 text-indigo-200">
+                            <span v-for="(person, idx) in result.created_by" class="mr-2 text-indigo-200">
                                 <RouterLink :to="'/person/' + person.id">
                                     {{ person.name }}
                                 </RouterLink>
@@ -81,11 +86,12 @@
                     <div class="flex flex-col mt-5">
                         <span class="flex justify-center text-indigo-100 font-semibold">Cast</span>
                         <div class="flex flex-wrap justify-center">
-                            <li v-for="person in cast" class="mr-5 text-indigo-200">
-                                <RouterLink :to="'/person/' + person.id">
+                            <span v-for="(person, idx) in cast" class="text-indigo-200">
+                                <RouterLink :to="'/person/' + person.id" class="mr-2">
                                     {{ person.name }}
                                 </RouterLink>
-                            </li>
+                                <span v-if="idx != cast.length - 1" class="mr-2">&#x2022;</span>
+                            </span>
                         </div>
                     </div>
                     <div class="flex flex-col mt-5">

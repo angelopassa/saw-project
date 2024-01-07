@@ -57,12 +57,20 @@
                 <div class="font-sm text-indigo-50 text-justify mt-5 bg-indigo-600 rounded-lg p-5">
                     <Text :text="result.overview"></Text>
                 </div>
-                <span class="text-right italic font-semibold font-xs text-indigo-50 mt-5">Durata {{ result.runtime
-                }}''</span>
+                <div class="flex justify-between mt-5 mb-5 text-indigo-50">
+                    <span
+                        class="flex items-center gap-2 text-xs font-bold bg-indigo-600 p-1.5 pl-2.5 rounded-l-md rounded-r-3xl">
+                        <span>Voto TMDB</span>
+                        <Vote :vote="result.vote_average"></Vote>
+                    </span>
+                    <span class="flex text-right italic font-semibold items-center">
+                        Durata {{ result.runtime }}''
+                    </span>
+                </div>
                 <div class="flex flex-row">
-                    <span class="flex text-indigo-100 font-semibold mr-5">Diretto da:</span>
+                    <div class="flex text-indigo-100 font-semibold mr-5">Diretto da:</div>
                     <div class="flex flex-wrap justify-center">
-                        <span v-for="(person, idx) in directors" class="mr-5 text-indigo-200">
+                        <span v-for="(person, idx) in directors" class="mr-2 text-indigo-200">
                             <span>
                                 <RouterLink :to="'/person/' + person.id">
                                     {{ person.name }}
@@ -75,7 +83,7 @@
                 <div class="flex flex-row">
                     <span class="flex text-indigo-100 font-semibold mr-5">Scritto da:</span>
                     <div class="flex flex-wrap justify-center">
-                        <span v-for="(person, idx) in writers" class="mr-5 text-indigo-200">
+                        <span v-for="(person, idx) in writers" class="mr-2 text-indigo-200">
                             <span>
                                 <RouterLink :to="'/person/' + person.id">
                                     {{ person.name }}
@@ -85,16 +93,17 @@
                         </span>
                     </div>
                 </div>
-                <div class="flex flex-col">
+                <div class="flex flex-col mt-5">
                     <span class="flex justify-center text-indigo-100 font-semibold">Cast</span>
                     <div class="flex flex-wrap justify-center">
-                        <li v-for="person in cast" class="mr-5 text-indigo-200">
-                            <span>
+                        <span v-for="(person, idx) in cast" class="text-indigo-200">
+                            <span class="mr-2">
                                 <RouterLink :to="'/person/' + person.id">
                                     {{ person.name }}
                                 </RouterLink>
                             </span>
-                        </li>
+                            <span v-if="idx != cast.length - 1" class="mr-2">&#x2022;</span>
+                        </span>
                     </div>
                 </div>
                 <div class="flex flex-col mt-5">
@@ -136,6 +145,7 @@ import Review from "@/components/Review.vue";
 import ToastFail from "@/components/ToastFail.vue";
 import ToastSuccess from "@/components/ToastSuccess.vue";
 import Text from "@/components/Text.vue";
+import Vote from "@/components/Vote.vue";
 import { useUserStore } from "@/stores/user";
 import { addToFav, isPresentFav } from "@/api/firebase/db";
 export default {
@@ -188,6 +198,6 @@ export default {
             this.mapSuccess[this.nSuccess] = 1;
         }
     },
-    components: { Loading, Review, ToastFail, ToastSuccess, Text }
+    components: { Loading, Review, ToastFail, ToastSuccess, Text, Vote }
 }
 </script>
