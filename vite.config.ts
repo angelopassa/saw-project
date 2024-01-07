@@ -19,9 +19,10 @@ export default defineConfig({
       srcDir: './',
       filename: 'firebase-messaging-sw.ts',
       injectManifest: {
-        globPatterns: ["**/*"]
+        globPatterns: ["**/*"],
+        globIgnores: ["_redirects"]
       },
-      includeAssets: ["**/*"],
+      includeAssets: ["favicon.svg"],
       manifest: {
         name: "Your Movie Lib",
         short_name: "Your Movie Lib",
@@ -29,7 +30,7 @@ export default defineConfig({
         background_color: "#584FEB",
         theme_color: "#584FEB",
         display: "standalone",
-        "icons": [
+        icons: [
           {
             "src": "windows11/SmallTile.scale-100.png",
             "sizes": "71x71"
