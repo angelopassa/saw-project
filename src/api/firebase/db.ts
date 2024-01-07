@@ -86,7 +86,7 @@ async function setNotify(id: number | string, flag: boolean): Promise<{ message:
     });
 }
 
-async function getUsersFav(): Promise<DocumentData | null> {
+async function getUsersFav(): Promise<{ data: DocumentData | null, fromCache: boolean }> {
     try {
         let userId: string = useUserStore().user.uid!;
         onSnapshot(doc(db, favCollName, userId), { includeMetadataChanges: true }, (snapshot) => {
@@ -94,10 +94,10 @@ async function getUsersFav(): Promise<DocumentData | null> {
             datafromCache = snapshot.metadata.fromCache;
         });
         let docum = await getDoc(doc(db, favCollName, userId));
-        if (docum.exists()) return docum.data();
-        return null;
+        if (docum.exists() && Object.keys(docum.data()).length != 0) return { data: docum.data(), fromCache: datafromCache };
+        return { data: null, fromCache: datafromCache };
     } catch (error) {
-        return null;
+        return { data: null, fromCache: datafromCache };
     }
 }
 
@@ -214,7 +214,7 @@ async function removeFavById(id: string | number): Promise<{ message: string, fr
     });
 }
 
-async function getUsersReviews(order?: string, up?: OrderByDirection): Promise<DocumentData[]> {
+async function getUsersReviews(order?: string, up?: OrderByDirection): Promise<{ data: DocumentData[], fromCache: boolean }> {
     let userId: string = useUserStore().user.uid!;
     let res: DocumentData[] = [];
     let q;
@@ -229,7 +229,7 @@ async function getUsersReviews(order?: string, up?: OrderByDirection): Promise<D
     });
     let docum = await getDocs(q);
     docum.forEach(doc => res.push(doc.data()));
-    return res;
+    return { data: res, fromCache: datafromCache };
 }
 
 async function removeReview(id: string): Promise<unknown> {

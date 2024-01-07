@@ -165,7 +165,6 @@ export default {
     },
     async created() {
         let result: Result | null = await getPopularMovies(1);
-        console.log(result);
         if (result) {
             this.nPageFilm = result.total_pages;
             this.pageLoadedFilm = result.page;
@@ -178,7 +177,6 @@ export default {
             this.tv = result.results;
         }
         result = await getUpcomingMovies(1);
-        console.log(result);
         if (result) {
             this.nPageUpcoming = result.total_pages;
             this.pageLoadedUpcoming = result.page;

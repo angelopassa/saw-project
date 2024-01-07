@@ -1,6 +1,7 @@
 <template>
     <div class="flex justify-center mx-auto">
-        <div class="flex flex-col items-center justify-center p-4 mt-4 rounded-lg border-indigo-200 border-2 lg:w-6/12 w-11/12">
+        <div
+            class="flex flex-col items-center justify-center p-4 mt-4 rounded-lg border-indigo-200 border-2 lg:w-6/12 w-11/12">
             <span class="font-extrabold text-2xl text-indigo-500">
                 Recupera Password
             </span>
@@ -15,7 +16,7 @@
                 @click="restore()">
                 Recupera Password
             </button>
-            <p class="text-red-500 text-sm font-semibold mt-5" v-if="restoreError">Utente non trovato!
+            <p class="text-red-500 text-sm font-semibold mt-5" v-if="restoreError">{{ errorMessage }}
             </p>
             <p class="text-green-500 text-sm font-semibold mt-5" v-if="restoreSuccess">Una mail è stata inviata a {{ email
             }}
@@ -33,9 +34,10 @@ export default {
     },
     data() {
         return {
-            email: "",
-            restoreError: false,
-            restoreSuccess: false
+            email: "" as string,
+            restoreError: false as boolean,
+            restoreSuccess: false as boolean,
+            errorMessage: "" as string
         }
     },
     watch: {
@@ -47,7 +49,14 @@ export default {
     methods: {
         async restore() {
             let error = await this.userStore.restorePassword(this.email);
-            if (error) this.restoreError = true;
+            console.log(error);
+            if (error) {
+                this.restoreError = true;
+                if (error == "auth/network-request-failed")
+                    this.errorMessage = "Nessuna connessione ad Internet!";
+                else
+                    this.errorMessage = "Utente non trovato!";
+            }
             else this.restoreSuccess = true;
         }
     }

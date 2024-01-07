@@ -68,7 +68,8 @@
                     </div>
                     <p class="text-red-500 text-sm font-semibold text-left w-full" v-if="passwordLoginEmpty">Password
                         Vuota</p>
-                    <RouterLink to="/restore" class="text-xs mt-2 hover:text-indigo-500 transition-all duration-300">Password Dimenticata?</RouterLink>
+                    <RouterLink to="/restore" class="text-xs mt-2 hover:text-indigo-500 transition-all duration-300">
+                        Password Dimenticata?</RouterLink>
                 </div>
 
                 <button class="rounded-full bg-indigo-700 text-indigo-50 text-center p-4 mt-5 min-w-full font-bold"
@@ -156,10 +157,12 @@ export default {
             if (error == "auth/invalid-email") {
                 this.emailErrorSignUp = true;
                 this.emailErrorSignUpMessage = "Formato dell'email non valido";
-            }
-            else if (error == "auth/email-already-in-use") {
+            } else if (error == "auth/email-already-in-use") {
                 this.signUpError = true;
                 this.signUpErrorMessage = "Email già in uso!";
+            } else if (error == "auth/network-request-failed") {
+                this.signUpError = true;
+                this.loginErrorMessage = "Nessuna connessione ad Internet!"
             }
         },
         async login() {
@@ -178,6 +181,9 @@ export default {
             } else if (error == "auth/wrong-password") {
                 this.loginError = true;
                 this.loginErrorMessage = "Password Errata!"
+            } else if (error == "auth/network-request-failed") {
+                this.loginError = true;
+                this.loginErrorMessage = "Nessuna connessione ad Internet!"
             }
         }
     }

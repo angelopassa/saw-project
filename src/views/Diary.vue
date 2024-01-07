@@ -1,9 +1,6 @@
 <template>
-    <div class="flex container mx-auto justify-center">
-        <span v-if="diary.length == 0 && !loading" class="text-sm">Non è presente nessun Film o Serie TV nel
-            tuo diario. Inizia a Recensire!</span>
-
-        <div v-else-if="loading" role="status"
+    <div class="container mx-auto justify-center">
+        <div v-if="loading" role="status"
             class="w-full p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded shadow animate-puls">
             <div class="flex items-center justify-between">
                 <div>
@@ -43,6 +40,22 @@
             <span class="sr-only">Loading...</span>
         </div>
 
+        <div v-else-if="diary.data.length == 0 && diary.fromCache"
+            class="flex flex-col bg-red-400 rounded-xl text-white font-bold p-5 justify-center items-center my-5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-wifi-off"
+                viewBox="0 0 16 16">
+                <path
+                    d="M10.706 3.294A12.545 12.545 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c.63 0 1.249.05 1.852.148l.854-.854zM8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065 8.448 8.448 0 0 1 3.51-1.27zm2.596 1.404.785-.785c.63.24 1.227.545 1.785.907a.482.482 0 0 1 .063.745.525.525 0 0 1-.652.065 8.462 8.462 0 0 0-1.98-.932zM8 10l.933-.933a6.455 6.455 0 0 1 2.013.637c.285.145.326.524.1.75l-.015.015a.532.532 0 0 1-.611.09A5.478 5.478 0 0 0 8 10m4.905-4.905.747-.747c.59.3 1.153.645 1.685 1.03a.485.485 0 0 1 .047.737.518.518 0 0 1-.668.05 11.493 11.493 0 0 0-1.811-1.07zM9.02 11.78c.238.14.236.464.04.66l-.707.706a.5.5 0 0 1-.707 0l-.707-.707c-.195-.195-.197-.518.04-.66A1.99 1.99 0 0 1 8 11.5c.374 0 .723.102 1.021.28zm4.355-9.905a.53.53 0 0 1 .75.75l-10.75 10.75a.53.53 0 0 1-.75-.75z" />
+            </svg>
+            <span>
+                Nessuna informazione disponibile nella cache
+            </span>
+        </div>
+
+        <span v-else-if="diary.data.length == 0 && !diary.fromCache" class="flex text-sm justify-center">
+            Non è presente nessun Film o Serie TV nel tuo diario. Inizia a Recensire!
+        </span>
+
         <div v-else class="w-full">
 
             <Order @order-by="async (by: string, up: number) => await order(by, up)"></Order>
@@ -75,7 +88,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="item in  diary " class="bg-white border-b hover:bg-gray-50">
+                        <tr v-for="item in diary.data" class="bg-white border-b hover:bg-gray-50">
                             <td class="p-4 text-xs">
                                 {{ item.dataVis.toDate().toLocaleString("it-IT", {
                                     day: 'numeric',
@@ -134,7 +147,7 @@
 
             <div class="block md:hidden">
                 <div class="grid grid-cols-1 gap-4 mx-1.5">
-                    <div v-for="item in diary" class="rounded-xl bg-white shadow-xl">
+                    <div v-for="item in diary.data" class="rounded-xl bg-white shadow-xl">
                         <div class="flex flex-col w-full">
                             <div class="p-4 flex flex-col w-full">
                                 <span class="text-xs text-indigo-300 uppercase font-light flex flex-row align-middle">
@@ -212,7 +225,7 @@ import Vote from '@/components/Vote.vue';
 export default {
     data() {
         return {
-            diary: [] as DocumentData[],
+            diary: { data: [], fromCache: false } as { data: DocumentData[], fromCache: boolean },
             loading: true as boolean
         };
     },
