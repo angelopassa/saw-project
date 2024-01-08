@@ -87,9 +87,11 @@ async function getUsersFav(): Promise<{ data: DocumentData | null, fromCache: bo
             datafromCache = snapshot.metadata.fromCache;
         });
         let docum = await getDoc(doc(db, favCollName, userId));
+        console.log(docum, docum.exists(), docum.data(), Object.keys(docum.data()!).length);
         if (docum.exists() && Object.keys(docum.data()).length != 0) return { data: docum.data(), fromCache: datafromCache };
         return { data: null, fromCache: datafromCache };
     } catch (error) {
+        console.log(error);
         return { data: null, fromCache: datafromCache };
     }
 }
