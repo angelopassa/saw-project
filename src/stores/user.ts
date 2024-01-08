@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { auth, fire } from '@/api/firebase/config';
 import { createUserWithEmailAndPassword, type User, signOut, signInWithEmailAndPassword, updateProfile, updatePassword, onAuthStateChanged, sendPasswordResetEmail, deleteUser } from 'firebase/auth';
 import { FirebaseError } from '@firebase/util';
-import { deleteAccount, addUsersInfo, updateUserDisplayName, getUsersReviews, deleteTokenDb, getTokensByIdMedia, deleteTokenDbByUser, storeToken } from '@/api/firebase/db';
+import { deleteAccount, addUsersInfo, getUsersReviews, deleteTokenDb, getTokensByIdMedia, deleteTokenDbByUser, storeToken, isPresentDisplayName, getUsersFav } from '@/api/firebase/db';
 import { getMessaging, isSupported, deleteToken, getToken } from 'firebase/messaging';
 
 export const useUserStore = defineStore('user', {
@@ -13,9 +13,27 @@ export const useUserStore = defineStore('user', {
     actions: {
         async signup(email: string, password: string, username: string) {
             try {
+                username = username.trim();
+                if (await isPresentDisplayName(username))
+                    throw new FirebaseError("auth/username-already-in-use", "Username già in uso!");
+
                 let res = await createUserWithEmailAndPassword(auth, email, password);
-                await this.changeUsername(username);
-                if (res) await addUsersInfo(res.user.uid, username);
+
+                if (res) {
+                    let color = colorList[Math.floor(Math.random() * colorList.length)];
+                    await updateProfile(res.user, { photoURL: color });
+
+                    await this.changeUsername(username);
+
+                    Notification.requestPermission()
+                        .then((res) => {
+                            console.log("Status: ", res);
+                        });
+
+                    if (!this.fcm_token)
+                        this.receiveToken();
+                }
+
             } catch (error: unknown) {
                 if (error instanceof FirebaseError)
                     return error.code;
@@ -24,16 +42,20 @@ export const useUserStore = defineStore('user', {
         async login(email: string, password: string) {
             try {
 
-                await signInWithEmailAndPassword(auth, email, password);
-                await getUsersReviews();
+                let res = await signInWithEmailAndPassword(auth, email, password);
 
-                Notification.requestPermission()
-                    .then((res) => {
-                        console.log("Status: ", res);
-                    });
+                if (res) {
+                    await getUsersReviews();
+                    await getUsersFav();
 
-                if (!this.fcm_token)
-                    this.receiveToken();
+                    Notification.requestPermission()
+                        .then((res) => {
+                            console.log("Status: ", res);
+                        });
+
+                    if (!this.fcm_token)
+                        this.receiveToken();
+                }
 
             } catch (error: unknown) {
                 if (error instanceof FirebaseError)
@@ -81,8 +103,11 @@ export const useUserStore = defineStore('user', {
         },
         async changeUsername(newUser: string) {
             try {
+                newUser = newUser.trim();
+                if ((await isPresentDisplayName(newUser)) && newUser !== this.user.displayName)
+                    throw new FirebaseError("auth/username-already-in-use", "Username già in uso!");
                 await updateProfile(this.user!, { displayName: newUser });
-                await updateUserDisplayName(this.user.uid, newUser);
+                await addUsersInfo(this.user.uid, newUser);
             } catch (error: unknown) {
                 if (error instanceof FirebaseError)
                     return error.code;
@@ -169,3 +194,28 @@ onAuthStateChanged(auth, (user) => {
     useUserStore().user = user;
     localStorage.setItem('user', JSON.stringify(user));
 });
+
+const colorList = [
+    'red',
+    'blue',
+    'green',
+    'gray',
+    'emerald',
+    'purple',
+    'slate',
+    'yellow',
+    'orange',
+    'zinc',
+    'neutral',
+    'stone',
+    'amber',
+    'lime',
+    'teal',
+    'cyan',
+    'sky',
+    'indigo',
+    'violet',
+    'fuchsia',
+    'pink',
+    'rose'
+];

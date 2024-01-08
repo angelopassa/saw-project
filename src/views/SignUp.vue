@@ -13,9 +13,8 @@
                     <label for="username"
                         class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Username</label>
                 </div>
-                <p class="text-red-500 text-sm font-semibold text-left w-full" v-if="usernameError">L'username deve
-                    contenere almeno 3
-                    caratteri
+                <p class="text-red-500 text-sm font-semibold text-left w-full" v-if="usernameError">
+                    {{ usernameErrorMessage }}
                 </p>
                 <div class="relative mt-4 w-full">
                     <input type="email" id="emailSignUp" v-model="emailSignUp"
@@ -106,6 +105,7 @@ export default {
             passwordSignUpError: false,
             passwordSignUpErrorMessage: "",
             usernameError: false,
+            usernameErrorMessage: "",
             emailErrorSignUpMessage: ""
         }
     },
@@ -127,13 +127,15 @@ export default {
                 this.passwordSignUpError = false;
         },
         username(nVal) {
-            if (nVal.length >= 3) this.usernameError = false;
+            if ((nVal.length >= 3 && this.usernameErrorMessage == "L'username deve contenere almeno 3 caratteri") || (this.usernameErrorMessage == "Username già in uso!"))
+                this.usernameError = false;
         }
     },
     methods: {
         async signUp() {
             if (this.username.length < 3) {
                 this.usernameError = true;
+                this.usernameErrorMessage = "L'username deve contenere almeno 3 caratteri";
                 return;
             }
             if (this.emailSignUp.length == 0) {
@@ -154,15 +156,21 @@ export default {
             let error = await this.store.signup(this.emailSignUp, this.passwordSignUp, this.username);
             if (!error) router.push("/");
             console.log(error);
-            if (error == "auth/invalid-email") {
-                this.emailErrorSignUp = true;
-                this.emailErrorSignUpMessage = "Formato dell'email non valido";
-            } else if (error == "auth/email-already-in-use") {
-                this.signUpError = true;
-                this.signUpErrorMessage = "Email già in uso!";
-            } else if (error == "auth/network-request-failed") {
-                this.signUpError = true;
-                this.loginErrorMessage = "Nessuna connessione ad Internet!"
+            switch (error) {
+                case "auth/invalid-email":
+                    this.emailErrorSignUp = true;
+                    this.emailErrorSignUpMessage = "Formato dell'email non valido";
+                    break;
+                case "auth/email-already-in-use":
+                    this.signUpError = true;
+                    this.signUpErrorMessage = "Email già in uso!";
+                    break;
+                case "auth/network-request-failed":
+                    this.signUpError = true;
+                    this.loginErrorMessage = "Nessuna connessione ad Internet!";
+                case "auth/username-already-in-use":
+                    this.usernameError = true;
+                    this.usernameErrorMessage = "Username già in uso!";
             }
         },
         async login() {
@@ -173,17 +181,20 @@ export default {
             let error = await this.store.login(this.emailLogin, this.passwordLogin);
             if (!error) router.push("/");
             console.log(error);
-            if (error == "auth/invalid-email")
-                this.emailErrorLogin = true;
-            else if (error == "auth/user-not-found") {
-                this.loginError = true;
-                this.loginErrorMessage = "Utente non trovato!"
-            } else if (error == "auth/wrong-password") {
-                this.loginError = true;
-                this.loginErrorMessage = "Password Errata!"
-            } else if (error == "auth/network-request-failed") {
-                this.loginError = true;
-                this.loginErrorMessage = "Nessuna connessione ad Internet!"
+            switch (error) {
+                case "auth/invalid-email":
+                    this.emailErrorLogin = true;
+                    break;
+                case "auth/wrong-password":
+                    this.loginError = true;
+                    this.loginErrorMessage = "Password Errata!"
+                    break;
+                case "auth/network-request-failed":
+                    this.loginError = true;
+                    this.loginErrorMessage = "Nessuna connessione ad Internet!"
+                case "auth/user-not-found":
+                    this.loginError = true;
+                    this.loginErrorMessage = "Utente non trovato!"
             }
         }
     }

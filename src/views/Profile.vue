@@ -11,8 +11,9 @@
                     placeholder=" " />
                 <label for="username"
                     class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Username</label>
-                <p class="text-red-500 text-sm font-semibold" v-if="usernameError">L'username deve contenere almeno 3
-                    caratteri</p>
+                <p class="text-red-500 text-sm font-semibold" v-if="usernameError">
+                    {{ usernameErrorMessage }}
+                </p>
             </div>
             <p v-show="showUsernameSuccessMessage"
                 class="text-green-500 bg-green-100 font-semibold w-full text-sm rounded-full text-center p-2 mt-1">Username
@@ -74,21 +75,24 @@ export default {
     data() {
         return {
             username: useUserStore().user.displayName as string,
-            usernameError: false,
+            usernameError: false as boolean,
+            usernameErrorMessage: "" as string,
             newPassword: "" as string,
             oldPassword: "" as string,
-            oldPasswordError: false,
-            newPasswordError: false,
-            newPasswordErrorMessage: "",
-            showPasswordSuccessMessage: false,
-            showUsernameSuccessMessage: false
+            oldPasswordError: false as boolean,
+            newPasswordError: false as boolean,
+            newPasswordErrorMessage: "" as string,
+            showPasswordSuccessMessage: false as boolean,
+            showUsernameSuccessMessage: false as boolean
         }
     },
     watch: {
         username(newValue) {
             this.showUsernameSuccessMessage = false;
-            if (newValue.length < 3)
+            if (newValue.length < 3) {
                 this.usernameError = true;
+                this.usernameErrorMessage = "L'username deve contenere almeno 3 caratteri";
+            }
             else
                 this.usernameError = false;
         },
@@ -125,6 +129,10 @@ export default {
         async updateUsername() {
             let error = await this.userStore.changeUsername(this.username);
             if (!error) this.showUsernameSuccessMessage = true;
+            else if (error == "auth/username-already-in-use") {
+                this.usernameError = true;
+                this.usernameErrorMessage = "Username già in uso!";
+            }
         },
         async deleteProf() {
             let error = await this.userStore.deleteProfile();

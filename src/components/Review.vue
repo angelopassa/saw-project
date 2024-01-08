@@ -143,7 +143,7 @@
         <div v-else class="m-5 w-full flex flex-col">
             <div v-for="review in reviews" class="mb-5">
                 <div class="flex flex-row items-center gap-2 text-xs font-semibold px-3 text-indigo-700 mb-2">
-                    <Avatar :username="review.userName" color="red"></Avatar>
+                    <Avatar :username="review.userName" :color="review.userColor"></Avatar>
                     {{ review.userName }} &#x2022; {{
                         review.dataRev.toDate().toLocaleString("it-IT", {
                             day: 'numeric',
@@ -248,7 +248,7 @@ export default {
                 url = '/tv/';
                 if (this.choice == "season") {
                     idS = (this.listEpisodesLocal[this.choiceSeason].id).toString();
-                    name = this.name + " • " + this.listSeason[this.choiceSeason].name;
+                    name = this.name + " • " + this.listEpisodesLocal[this.choiceSeason].name;
                     type = 'stagione';
                 } else if (this.choice == "episode") {
                     idS = (this.listEpisodesLocal[this.choiceSeason].episodes[this.choiceEpisode].id).toString();

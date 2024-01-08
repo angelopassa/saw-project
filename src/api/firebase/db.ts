@@ -11,23 +11,17 @@ const notifyCollName = 'notifiche';
 
 let datafromCache = true;
 
-async function getUserInfo(uid: string) {
-
+async function isPresentDisplayName(displayName: string): Promise<boolean> {
+    let q = query(collection(db, userCollName), where("displayName", "==", displayName));
+    let d = await getDocs(q);
+    return !d.empty;
 }
 
-async function addUsersInfo(uid: string, displayName: string, image?: string) {
-    let data = {
-        displayName,
-        image: image ? image : null
-    }
-    await setDoc(doc(db, userCollName, uid), data);
-}
-
-async function updateUserDisplayName(uid: string, displayName: string) {
+async function addUsersInfo(uid: string, displayName: string) {
     let data = {
         displayName
     }
-    await updateDoc(doc(db, userCollName, uid), data);
+    await setDoc(doc(db, userCollName, uid), data, { merge: true });
 }
 
 async function addToFav(idFilm: number, filmName: string, type: string, posterPath?: string, voteAverage?: number): Promise<unknown> {
@@ -111,10 +105,12 @@ async function addReview(idPage: string, idMedia: string, titleRev: string, desc
     try {
         let utente = useUserStore().user;
         let userId: string = utente.uid!;
+        let userColor: string = utente.photoURL;
         const q = query(collection(db, reviewCollName), where("idMedia", "==", idMedia), where("userId", "==", userId));
         let docum = await getDocs(q);
         let data = {
             userId,
+            userColor,
             dataRev: Timestamp.fromMillis(dataRev),
             dataVis: Timestamp.fromDate(dataVis),
             idPage,
@@ -265,6 +261,7 @@ async function deleteAccount(uid: string) {
     });
     await deleteDoc(doc(db, favCollName, uid));
     await deleteDoc(doc(db, userCollName, uid));
+    await deleteDoc(doc(db, notifyCollName, uid));
 }
 
 async function storeToken(token: string) {
@@ -333,6 +330,6 @@ async function deleteTokenDb(token: string) {
 
 export {
     addToFav, getUsersFav, addReview, getReviewById, isPresentFav, removeFavById, getUsersReviews, getReviewByIdMediaAndUser,
-    removeReview, deleteAccount, addUsersInfo, getUserInfo, updateUserDisplayName, setNotify, setSubscription,
-    getTokensByIdMedia, deleteTokenDb, storeToken, deleteTokenDbByUser
+    removeReview, deleteAccount, addUsersInfo, setNotify, setSubscription, getTokensByIdMedia, deleteTokenDb, storeToken,
+    deleteTokenDbByUser, isPresentDisplayName
 }

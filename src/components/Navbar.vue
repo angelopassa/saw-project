@@ -39,7 +39,7 @@
                             Login
                         </RouterLink>
 
-                        <Avatar :username="store.user.displayName" color="red" v-if="store.user">
+                        <Avatar :username="store.user.displayName" :color="store.user.photoURL" v-if="store.user">
                         </Avatar>
                         <RouterLink to="/profile" class="py-5 px-2 text-indigo-200 hover:text-indigo-100" v-if="store.user">
                             {{ store.user.displayName }}
@@ -81,7 +81,7 @@
                     Login</RouterLink>
                 <RouterLink to="/profile" v-if="store.user"
                     class="transition duration-500 py-2 px-4 hover:bg-indigo-700 hover:text-indigo-200 text-indigo-100 p-2 rounded mx-2 flex gap-3 items-center">
-                    <Avatar :username="store.user.displayName" color="red" v-if="store.user"></Avatar>
+                    <Avatar :username="store.user.displayName" :color="store.user.photoURL"></Avatar>
                     {{ store.user.displayName }}
                 </RouterLink>
                 <button @click="store.logout(); router.push('/')" v-if="store.user"
