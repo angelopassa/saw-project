@@ -16,7 +16,7 @@
         </div>
 
         <div v-if="result" v-show="!loading && !noNet">
-            <div class="flex my-5 md:mx-20 p-5 flex-col lg:flex-row justify-center">
+            <div class="flex my-5 md:mx-20 md:p-5 p-1 flex-col lg:flex-row justify-center">
                 <div class="flex lg:mr-5 min-w-max justify-center mb-5 lg:mb-0 items-center">
                     <img v-if="result.poster_path" :src="'https://image.tmdb.org/t/p/w300' + result.poster_path" alt=""
                         class="rounded-lg">
@@ -30,7 +30,7 @@
                         </svg>
                     </div>
                 </div>
-                <div class="flex bg-indigo-500 rounded-lg flex-col px-10 py-7 w-full">
+                <div class="flex bg-indigo-500 rounded-lg flex-col md:px-10 px-3.5 py-7 w-full">
                     <div class="flex flex-wrap">
                         <span v-for="genre in result!.genres"
                             class="flex m-1 text-indigo-50 rounded-md align-middle p-1 font-bold text-sm"
@@ -64,7 +64,7 @@
                     </div>
                     <span class="italic font-semibold text-indigo-50" :class="result.tagline == '' ? 'hidden' : 'block'">"{{
                         result.tagline }}"</span>
-                    <span class="font-sm text-indigo-50 text-justify mt-5 bg-indigo-600 rounded-lg p-5">
+                    <span class="font-sm text-indigo-50 text-justify mt-5 bg-indigo-600 rounded-lg md:p-5 p-3">
                         <Text :text="result.overview"></Text>
                     </span>
                     <span
@@ -121,7 +121,7 @@
                 </div>
             </div>
 
-            <div class="my-10 mx-10 lg:mx-32">
+            <div class="my-10 md:mx-10 lg:mx-32 mx-2">
                 <div v-for="(season, idx) in result.seasons">
                     <div class="flex flex-row bg-indigo-600 justify-between p-4"
                         :class="setupClassNav(idx, season.season_number)" @click="getEpisodes(season.season_number)">
@@ -184,7 +184,7 @@
 
                         <div v-else class="bg-indigo-500 text-indigo-50"
                             :class="idx == result.seasons.length - 1 ? 'rounded-b-md' : ''">
-                            <div class="mx-10" v-for="(episode, idx) in seasons[season.season_number].episodes">
+                            <div class="sm:mx-10 mx-1" v-for="episode in seasons[season.season_number].episodes">
                                 <div class="flex flex-col p-2 md:flex-row">
                                     <span class="flex items-center p-2 font-extrabold">
                                         S{{ season.season_number }}E{{ episode.episode_number }}

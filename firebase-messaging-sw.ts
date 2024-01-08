@@ -36,14 +36,6 @@ self.addEventListener('push', function (event) {
     icon: 'windows11/LargeTile.scale-100.png',
     data: data,
     vibration: [200, 100, 200],
-    action: [
-      {
-        action: 'coffee-action',
-        title: 'Coffee',
-        type: 'button',
-        icon: 'windows11/LargeTile.scale-100.png',
-      }
-    ]
   };
   event.waitUntil(
     self.registration.showNotification(title, options)

@@ -15,7 +15,7 @@
             </span>
         </div>
 
-        <div v-if="result" v-show="!loading && !noNet" class="flex my-5 p-5 flex-col lg:flex-row justify-center">
+        <div v-if="result" v-show="!loading && !noNet" class="flex my-5 md:p-5 p-1 flex-col lg:flex-row justify-center">
             <div class="flex lg:mr-5 min-w-max justify-center mb-5 lg:mb-0 items-center">
                 <img v-if="result.poster_path" :src="'https://image.tmdb.org/t/p/w300' + result.poster_path" alt=""
                     class="rounded-lg">
@@ -29,7 +29,7 @@
                     </svg>
                 </div>
             </div>
-            <div class="flex bg-indigo-500 rounded-lg flex-col px-10 py-7 w-full">
+            <div class="flex bg-indigo-500 rounded-lg flex-col md:px-10 py-7 px-3.5 w-full">
                 <div class="flex flex-wrap">
                     <span v-for="genre in result.genres"
                         class="m-1 text-indigo-50 rounded-md align-middle p-1 font-bold text-sm"
@@ -54,7 +54,7 @@
                 </div>
                 <span class="italic font-semibold text-indigo-50" :class="result.tagline == '' ? 'hidden' : 'block'">"{{
                     result.tagline }}"</span>
-                <div class="font-sm text-indigo-50 text-justify mt-5 bg-indigo-600 rounded-lg p-5">
+                <div class="font-sm text-indigo-50 text-justify mt-5 bg-indigo-600 rounded-lg md:p-5 p-3">
                     <Text :text="result.overview"></Text>
                 </div>
                 <div class="flex justify-between mt-5 mb-5 text-indigo-50">

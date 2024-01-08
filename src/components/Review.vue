@@ -1,7 +1,8 @@
 <template>
-    <div class="flex flex-col container md:mx-auto items-center p-4">
+    <div class="flex flex-col container md:mx-auto items-center md:p-4 p-2">
         <span class="text-2xl font-extrabold text-indigo-500">Recensioni</span>
-        <form class="flex flex-col w-full m-5 rounded-xl bg-indigo-100 p-2" @submit.prevent="sendReview()">
+        <form class="flex flex-col w-full m-5 rounded-xl bg-indigo-100 p-2"
+            @submit.prevent="store.user ? sendReview() : $router.push('/signup')">
             <div v-if="type == 'tv'" class="p-3">
                 <div class="p-2">
                     <span class="text-indigo-500 text-sm font-bold">Scegli cosa recensire</span>
@@ -92,7 +93,7 @@
                     class="rounded-xl text-sm border-indigo-200 border-2 focus:ring-0 p-2 text-center"
                     :disabled="loading || noNet">
             </div>
-            <button type="submit" :disabled="!store.user || loading || noNet"
+            <button type="submit" :disabled="loading || noNet"
                 class="flex flex-row items-center justify-center self-center w-40 text-lg font-bold bg-indigo-700 text-indigo-50 rounded-full p-2 my-4">
                 <span class="mr-2">Invia</span>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -154,9 +155,9 @@
                 </div>
                 <div class="flex flex-col bg-indigo-400 rounded-xl border-indigo-50 p-4 text-indigo-50">
                     <div class="flex flex-row justify-between items-center bg-indigo-500 p-2 rounded-xl">
-                        <div>
+                        <div class="flex sm:flex-row flex-col sm:items-center">
                             <span class="text-medium font-bold px-3 text-indigo-100">{{ review.nameMedia }}</span>
-                            <span class="text-sm font-normal">Visto il {{
+                            <span class="text-sm font-normal sm:px-0 px-3">Visto il {{
                                 review.dataVis.toDate().toLocaleString("it-IT", {
                                     day: 'numeric',
                                     month: 'long',

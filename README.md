@@ -1,40 +1,49 @@
-# saw-project
+# Progetto Esame Sviluppo Applicazioni Web - "Your Movie Lib"
 
-This template should help get you started developing with Vue 3 in Vite.
+*Your Movie Lib* è una web app a tema cinematografico che consente di cercare e visualizzare
+informazioni su film, serie tv e persone del settore. L'app ha anche una funzione di blog, in
+quanto disponendo di un account è possibile aggiungere un media ai preferiti e/o scrivere recensioni
+per film, serie tv (nello specifico è possibile valutare non solo la serie nella sua interezza ma anche le
+singole stagioni ed episodi che la compongono). Fra i media aggiunti ai preferiti è possibile specificare
+la preferenza sulle notifiche, la quale indica la volontà dell'utente di ricevere notifiche quando una nuova recensione
+su quel media è stata aggiunta oppure se una già esistente è stata aggiornata.
 
-## Recommended IDE Setup
+La web app è stata sviluppata in Vite.js + Vue.js utilizzando come linguaggi `HTML`, `CSS`, `Typescript` e `Javascript`.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+Le librerie utilizzate sono `Tailwind CSS`, le librerie ufficiali di `Vue.js` (`Vue Router` e `Pinia` per lo store), e
+`Vite PWA`.
 
-## Type Support for `.vue` Imports in TS
+Le **API** utilizzate sono quelle di [TMDB](https://developer.themoviedb.org/docs/getting-started) per la visualizzazione dei media
+e quelle di `Firebase` per gestire l'autenticazione degli utenti, per memorizzare i lori dati tramite `Firestore` e per l'invio
+delle notifiche tramite `Firebase Cloud Messaging`.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+## PWA e Notifiche
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+L'app è installabile PWA ed funzionante offline, utilizzando le cache per memorizzare le risposte fornite da `TMDB` e da `Firebase`.
+Le funzionalità non disponibili offline sono la ricerca di nuovi titoli/persone, la modifica del profilo, il recupero della password, la registrazione ed il login. In questo caso viene visualizzata una pagina di fallback.
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+Un utente loggato, quando è offline, può visualizzare i propri preferiti e il proprio diario (se le informazioni sono in cache), può
+aggiungere/rimuovere un media ai preferiti e può modificare/aggiungere una recensione ad un media che si trova in cache.
 
-## Customize configuration
+Un utente non loggato, quando è offline, ha la possibilità di vedere i media nella *Home* e di visualizzare le recensioni (se presenti in cache) di questi media.
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+L'unica limitazione offline è che quando viene modificata/aggiunta una nuova recensione gli utenti sottoscritti a quel media
+non saranno notificati.
 
-## Project Setup
+## Link
+
+https://yourmovielib.netlify.app
+
+## Esecuzione dell'app in locale
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
 ```sh
 npm run build
+```
+
+```sh
+npm run preview
 ```
