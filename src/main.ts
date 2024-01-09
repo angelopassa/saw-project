@@ -24,13 +24,9 @@ Notification.requestPermission()
 
 function registerToStateChange(registration: ServiceWorkerRegistration) {
     registration.installing!.addEventListener("statechange", () => {
-        console.log("dio mios", registration);
         if (registration.active && registration.active.state === "activated") {
-            console.log("oh dio mui");
-            if (!useUserStore().fcm_token && useUserStore().user) {
-                console.log("porca madonna r");
+            if (useUserStore().user && !useUserStore().fcm_token)
                 useUserStore().receiveToken();
-            }
         }
     });
 }
@@ -38,9 +34,8 @@ function registerToStateChange(registration: ServiceWorkerRegistration) {
 navigator.serviceWorker.getRegistration("/firebase-cloud-messaging-push-scope")
     .then((registration) => {
         if (registration) {
-            if (registration.installing) {
+            if (registration.installing)
                 registerToStateChange(registration);
-            }
             else {
                 registration.addEventListener("updatefound", () => {
                     registerToStateChange(registration);
