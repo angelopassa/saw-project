@@ -22,15 +22,31 @@ Notification.requestPermission()
         console.log("Status: ", res);
     });
 
+function registerToStateChange(registration: ServiceWorkerRegistration) {
+    registration.installing!.addEventListener("statechange", () => {
+        console.log("dio mios", registration);
+        if (registration.active && registration.active.state === "activated") {
+            console.log("oh dio mui");
+            if (!useUserStore().fcm_token && useUserStore().user) {
+                console.log("porca madonna r");
+                useUserStore().receiveToken();
+            }
+        }
+    });
+}
+
 navigator.serviceWorker.getRegistration("/firebase-cloud-messaging-push-scope")
     .then((registration) => {
-        console.log("Rc", registration);
-        registration!.addEventListener("updatefound", () => {
-            registration?.installing?.addEventListener("statechange", () => {
-                console.log("dio mios", registration);
-                console.log(registration.active, registration.installing, registration.waiting);
-            })
-        });
+        if (registration) {
+            if (registration.installing) {
+                registerToStateChange(registration);
+            }
+            else {
+                registration.addEventListener("updatefound", () => {
+                    registerToStateChange(registration);
+                });
+            }
+        }
     });
 
 if (Notification.permission == 'granted' && useUserStore().user && !useUserStore().fcm_token)
