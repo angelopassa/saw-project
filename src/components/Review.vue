@@ -23,18 +23,15 @@
                         <label for="episode-choice" class="ml-2 text-sm font-medium text-gray-900">Episodio</label>
                     </div>
                     <div v-if="choice != 'serie'">
-                        <label for="season-list" class="block mb-2 text-sm font-medium text-gray-900 sr-only">Select
-                            an option</label>
                         <select id="season-list" v-model="choiceSeason" :disabled="loading || noNet" @change="getEpisodes()"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                            <option v-for="season in listSeason" :value="season.season_number">
+                            <option v-for="season in listSeason" :value="season.season_number"
+                                :disabled="choice == 'episode' && noNetSeasons[season.season_number]">
                                 {{ season.name }}
                             </option>
                         </select>
                     </div>
                     <div v-if="choice == 'episode'" class="mt-2">
-                        <label for="episode-list" class="block mb-2 text-sm font-medium text-gray-900 sr-only">Select
-                            an option</label>
                         <select id="episode-list" v-model="choiceEpisode" :disabled="loading || noNet"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                             <option v-if="listEpisodesLocal[choiceSeason]"
@@ -188,7 +185,7 @@ import Text from './Text.vue';
 import { DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
 export default {
-    props: ['mediaId', 'posterPath', 'name', 'type', 'listSeason', 'listEpisodes', 'idcomment', 'noNet'],
+    props: ['mediaId', 'posterPath', 'name', 'type', 'listSeason', 'listEpisodes', 'idcomment', 'noNet', 'noNetSeasons'],
     emits: ['addSeasonInfo'],
     data() {
         return {
@@ -272,8 +269,15 @@ export default {
         },
         async getEpisodes() {
             if (!this.listEpisodesLocal[this.choiceSeason]) {
+                this.noNetSeasons[this.choiceSeason] = false;
                 let res = await getEpisodesById(this.mediaId, this.choiceSeason);
-                this.listEpisodesLocal[this.choiceSeason] = res;
+                if (res)
+                    this.listEpisodesLocal[this.choiceSeason]
+                else {
+                    this.noNetSeasons[this.choiceSeason] = true;
+                    this.choiceSeason = Number.parseInt(Object.entries(this.noNetSeasons).find(([idx, flag]) => !flag)![0]);
+                    return;
+                }
                 this.$emit('addSeasonInfo', this.choiceSeason, res);
             }
         }

@@ -167,10 +167,12 @@ export default {
                     break;
                 case "auth/network-request-failed":
                     this.signUpError = true;
-                    this.loginErrorMessage = "Nessuna connessione ad Internet!";
+                    this.signUpErrorMessage = "Nessuna connessione ad Internet!";
+                    break;
                 case "auth/username-already-in-use":
                     this.usernameError = true;
                     this.usernameErrorMessage = "Username già in uso!";
+                    break;
             }
         },
         async login() {
@@ -187,14 +189,16 @@ export default {
                     break;
                 case "auth/wrong-password":
                     this.loginError = true;
-                    this.loginErrorMessage = "Password Errata!"
+                    this.loginErrorMessage = "Password Errata!";
                     break;
                 case "auth/network-request-failed":
                     this.loginError = true;
-                    this.loginErrorMessage = "Nessuna connessione ad Internet!"
+                    this.loginErrorMessage = "Nessuna connessione ad Internet!";
+                    break;
                 case "auth/user-not-found":
                     this.loginError = true;
                     this.loginErrorMessage = "Utente non trovato!"
+                    break;
             }
         }
     }

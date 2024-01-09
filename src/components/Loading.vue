@@ -1,5 +1,5 @@
 <template>
-    <div v-show="loading" role="status" class="space-y-8 animate-pulse md:space-y-0 md:space-x-8 md:flex">
+    <div role="status" class="space-y-8 animate-pulse md:space-y-0 md:space-x-8 md:flex">
         <div class="flex items-center justify-center w-full h-96 bg-gray-300 rounded sm:w-96 dark:bg-gray-700">
             <svg class="w-10 h-10 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor" viewBox="0 0 20 18">
@@ -23,9 +23,3 @@
         <span class="sr-only">Loading...</span>
     </div>
 </template>
-
-<script lang="ts">
-export default {
-    props: ['loading']
-}
-</script>

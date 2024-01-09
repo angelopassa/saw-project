@@ -20,7 +20,7 @@ export default {
         this.added = true;
         setTimeout(() => {
             this.added = false;
-        }, 1000);
+        }, 2000);
     }
 }
 </script>
