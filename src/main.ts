@@ -22,6 +22,21 @@ Notification.requestPermission()
         console.log("Status: ", res);
     });
 
+navigator.serviceWorker.getRegistration("/firebase-cloud-messaging-push-scope")
+    .then((registration) => {
+        console.log("c", registration?.installing);
+        registration?.addEventListener("updatefound", () => {
+            registration.installing?.addEventListener("statechange", () => {
+                console.log("stato: ", registration.installing?.state);
+                if (registration.installing?.state === "activated" && !useUserStore().fcm_token) {
+                    console.log("gay");
+                    useUserStore().receiveToken();
+                }
+
+            });
+        });
+    });
+
 if (Notification.permission == 'granted' && useUserStore().user && !useUserStore().fcm_token)
     useUserStore().receiveToken();
 

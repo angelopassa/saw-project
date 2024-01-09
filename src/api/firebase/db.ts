@@ -130,7 +130,6 @@ async function addReview(idPage: string, idMedia: string, titleRev: string, desc
                 let unsubListener: Unsubscribe = onSnapshot(collection(db, reviewCollName), {}, (snapshot) => {
                     snapshot.docChanges().forEach((changes) => {
                         let dataC = changes.doc.data();
-                        console.log(dataC, data, JSON.stringify(dataC) == JSON.stringify(data), _.isEqual(dataC, data));
                         if (_.isEqual(dataC, data)) {
                             unsubListener();
                             res("Success");
