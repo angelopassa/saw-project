@@ -26,7 +26,14 @@ navigator.serviceWorker.getRegistration("/firebase-cloud-messaging-push-scope")
     .then((registration) => {
         console.log("Rc", registration);
         registration!.addEventListener("updatefound", () => {
-            console.log(registration);
+            console.log("cazzo");
+            if (registration!.active && registration?.active.state === "activated")
+                console.log("dio mio");
+            else {
+                registration?.active?.addEventListener("statechange", () => {
+                    console.log("nuovo stato: ", registration.active?.state);
+                })
+            }
         });
     });
 
