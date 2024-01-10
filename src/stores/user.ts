@@ -136,7 +136,7 @@ export const useUserStore = defineStore('user', {
                 .then((value) => {
                     if (value) {
                         const messaging = getMessaging(fire);
-                        getToken(messaging, { vapidKey: "BPwPKU_nGOjy5OCeSPtk-ETmvrPAfZL_4fmnv-vh1AWo6xQI4IMlbJdnxM736teCVrTRxmuZyYseqUyQ-VO-mWg" })
+                        getToken(messaging, { vapidKey: import.meta.env.VITE_FCM_VAPID_KEY })
                             .then((token) => {
                                 console.log("Token assegnato: ", token);
                                 storeToken(token);
@@ -149,7 +149,7 @@ export const useUserStore = defineStore('user', {
         async notifySub(id: string, url: string) {
 
             const send = async (token: string) => {
-                const serverKey = 'AAAAohAHtFI:APA91bEkU5UgXZKqQWYq6_wnBTqJF8sTX2_hA7pVpuoxjLQnf66yiWhlff2zFvoNUMFWHphY7CvRXoi6aUrHyL-Y3gdAgDG6Aw1unLFllZXyNE3zOQEF2aofRcMsf-dIaAuGOFOcoUTM';
+                const serverKey = import.meta.env.VITE_FCM_SERVER_KEY;
 
                 const payload = {
                     notification: {
