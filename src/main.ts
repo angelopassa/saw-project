@@ -60,10 +60,9 @@ if ('permissions' in navigator) {
                             let tok = useUserStore().fcm_token;
                             useUserStore().fcm_token = null;
                             localStorage.removeItem('fcm_token');
-                            const messaging = getMessaging(fire);
                             return Promise.all([
                                 deleteTokenDbByUser(tok),
-                                deleteToken(messaging)
+                                deleteToken(getMessaging(fire))
                                     .then(() => {
                                         console.log("Token eliminato con successo!");
                                     })

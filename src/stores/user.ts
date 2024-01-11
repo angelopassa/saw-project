@@ -63,34 +63,35 @@ export const useUserStore = defineStore('user', {
             }
         },
         async logout() {
-            isSupported()
-                .then((value) => {
-                    if (value) {
-                        let tok = this.fcm_token;
-                        this.fcm_token = null;
-                        localStorage.removeItem('fcm_token');
-                        const messaging = getMessaging(fire);
-                        return Promise.all([
-                            deleteTokenDbByUser(tok),
-                            deleteToken(messaging)
-                                .then(() => {
-                                    console.log("Token eliminato con successo!");
-                                })
-                                .catch((err) => {
-                                    console.log("Errore durante l'eliminazione del token: ", err);
-                                })
-                        ])
-                            .catch((errore) => {
-                                console.log("Errore: ", errore);
-                            });
-                    }
-                })
+            let uid = this.user.uid;
+            return signOut(auth)
                 .then(() => {
-                    return signOut(auth);
+                    return isSupported()
+                        .then((value) => {
+                            if (value) {
+                                let tok = this.fcm_token;
+                                this.fcm_token = null;
+                                localStorage.removeItem('fcm_token');
+                                return Promise.all([
+                                    deleteTokenDbByUser(tok, uid),
+                                    deleteToken(getMessaging(fire))
+                                        .then(() => {
+                                            console.log("Token eliminato con successo!");
+                                        })
+                                        .catch((err) => {
+                                            console.log("Errore durante l'eliminazione del token: ", err);
+                                        })
+                                ])
+                                    .catch((errore) => {
+                                        console.log("Errore: ", errore);
+                                    });
+                            }
+                        })
+                        .catch((error) => {
+                            console.log("Errore: ", error);
+                        });
                 })
-                .catch((error) => {
-                    console.log("Errore: ", error);
-                });
+
         },
         async changePassword(newPass: string) {
             try {
@@ -126,6 +127,8 @@ export const useUserStore = defineStore('user', {
                 let uid = this.user.uid;
                 await deleteUser(this.user!);
                 await deleteAccount(uid);
+                this.fcm_token = null;
+                localStorage.removeItem('fcm_token');
             } catch (error: unknown) {
                 if (error instanceof FirebaseError)
                     return error.code;

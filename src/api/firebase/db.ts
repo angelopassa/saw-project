@@ -302,8 +302,8 @@ async function getTokensByIdMedia(idMedia: string) {
     return tokens;
 }
 
-async function deleteTokenDbByUser(token: string) {
-    let userId: string = useUserStore().user.uid!;
+async function deleteTokenDbByUser(token: string, uid?: string) {
+    let userId: string = uid ? uid : useUserStore().user.uid!;
 
     return new Promise((res, rej) => {
         try {
@@ -313,7 +313,7 @@ async function deleteTokenDbByUser(token: string) {
                     res("Success");
                 }
             });
-            setDoc(doc(db, notifyCollName, userId), { tokens: arrayRemove(token) }, { merge: true });
+            updateDoc(doc(db, notifyCollName, userId), { tokens: arrayRemove(token) });
         } catch (error) {
             rej(error);
         }
@@ -324,7 +324,7 @@ async function deleteTokenDb(token: string) {
     let q = query(collection(db, notifyCollName), where("tokens", "array-contains", token));
     let d = await getDocs(q);
     d.forEach((docum) => {
-        setDoc(docum.ref, { tokens: arrayRemove(token) }, { merge: true });
+        updateDoc(docum.ref, { tokens: arrayRemove(token) });
     });
 }
 

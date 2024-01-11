@@ -120,7 +120,11 @@ export default {
             let email = this.userStore.user.email;
             let error = await this.userStore.login(email, this.oldPassword);
             if (error) {
-                this.oldPasswordError = true;
+                if (error == "auth/network-request-failed") {
+                    this.newPasswordError = true;
+                    this.newPasswordErrorMessage = "Nessuna connessione ad Internet!";
+                }
+                else this.oldPasswordError = true;
                 return;
             }
             error = await this.userStore.changePassword(this.newPassword);
@@ -128,11 +132,22 @@ export default {
         },
         async updateUsername() {
             let error = await this.userStore.changeUsername(this.username);
-            if (!error) this.showUsernameSuccessMessage = true;
-            else if (error == "auth/username-already-in-use") {
-                this.usernameError = true;
-                this.usernameErrorMessage = "Username già in uso!";
+            console.log(error);
+            if (!error) {
+                this.showUsernameSuccessMessage = true;
+                return;
             }
+
+            switch (error) {
+                case "auth/username-already-in-use":
+                    this.usernameErrorMessage = "Username già in uso!";
+                    break;
+                case "auth/network-request-failed":
+                    this.usernameErrorMessage = "Nessuna connessione ad Internet!";
+                    break;
+            }
+
+            this.usernameError = true;
         },
         async deleteProf() {
             let error = await this.userStore.deleteProfile();
