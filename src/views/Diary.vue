@@ -202,8 +202,7 @@ export default {
             router.push({
                 name: type == 'film' ? 'movie' : 'tv',
                 params: { id: id },
-                query: { idcomment: idS },
-                hash: type == 'film' ? '#commentmovie' : '#commentv',
+                query: { idcomment: idS }
             });
         },
         async order(by: string, up: number) {

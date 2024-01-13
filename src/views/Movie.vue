@@ -110,8 +110,8 @@
             </div>
         </div>
 
-        <Review :media-id="movie_id" :poster-path="result ? result.backdrop_path : null"
-            :name="result ? result.title : null" :idcomment="idcomment" id="commentmovie" :no-net="noNet"></Review>
+        <Review id="commentmovie" :media-id="movie_id" :poster-path="result ? result.backdrop_path : null"
+            :name="result ? result.title : null" :idcomment="idcomment" :no-net="noNet"></Review>
     </div>
 
     <div v-for="i in nSuccess">
@@ -158,7 +158,8 @@ export default {
             nSuccess: 0 as number,
             nFail: 0 as number,
             mapSuccess: {} as { [key: number]: number },
-            mapFail: {} as { [key: number]: number }
+            mapFail: {} as { [key: number]: number },
+            loaded: false
         };
     },
     async created() {
@@ -176,6 +177,14 @@ export default {
         } else
             this.noNet = true;
         this.loading = false;
+    },
+    updated() {
+        if (this.idcomment && !this.loading && !this.loaded) {
+            document.getElementById('commentmovie')!.scrollIntoView({
+                behavior: "smooth"
+            });
+            this.loaded = true;
+        }
     },
     methods: {
         async addToFavourite(idFilm: number, filmName: string, type: string, poster_path?: string, vote_average?: number) {

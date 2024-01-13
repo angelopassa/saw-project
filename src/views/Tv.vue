@@ -270,7 +270,8 @@ export default {
             nSuccess: 0 as number,
             nFail: 0 as number,
             mapSuccess: {} as { [key: number]: number },
-            mapFail: {} as { [key: number]: number }
+            mapFail: {} as { [key: number]: number },
+            loaded: false
         }
     },
     async created() {
@@ -288,6 +289,14 @@ export default {
             this.noNet = true;
 
         this.loading = false;
+    },
+    updated() {
+        if (this.idcomment && !this.loading && !this.loaded) {
+            document.getElementById('commentv')!.scrollIntoView({
+                behavior: "smooth"
+            });
+            this.loaded = true;
+        }
     },
     methods: {
         async getEpisodes(nr_season: number) {
