@@ -1,7 +1,7 @@
 <template>
     <div class="container mx-auto justify-center">
 
-        <LoadingTextVue v-if="loading"></LoadingTextVue>
+        <LoadingText v-if="loading"></LoadingText>
 
         <CacheError v-else-if="diary.data.length == 0 && diary.fromCache"></CacheError>
 
