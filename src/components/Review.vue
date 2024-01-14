@@ -275,7 +275,8 @@ export default {
                     this.listEpisodesLocal[this.choiceSeason]
                 else {
                     this.noNetSeasons[this.choiceSeason] = true;
-                    this.choiceSeason = Number.parseInt(Object.entries(this.noNetSeasons).find(([idx, flag]) => !flag)![0]);
+                    if (this.choice === 'episode')
+                        this.choiceSeason = Number.parseInt(Object.entries(this.noNetSeasons).find(([idx, flag]) => !flag)![0]);
                     return;
                 }
                 this.$emit('addSeasonInfo', this.choiceSeason, res);
