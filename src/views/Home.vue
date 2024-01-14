@@ -7,11 +7,19 @@
 
         <Carousel ref="carouselFilm" v-bind="settings" :breakpoints="breakpoints" v-show="visibleFilm"
             @slide-start="({ slidingToIndex }) => slidingToIndex === carouselFilm.data.maxSlide.value ? updateFilm() : null">
-            <Slide v-for="item in movies" :key="item.id">
+
+            <Slide v-if="movies.length == 0" v-for="i in 10" :key="i">
+                <div class="carousel__item flex flex-col justify-between p-">
+                    <LoadingCarousel></LoadingCarousel>
+                </div>
+            </Slide>
+
+            <Slide v-else v-for="item in movies" :key="item.id">
                 <div class="carousel__item flex flex-col justify-between p-2">
                     <Card :item="item" type="film" @fail-fav="updateFail()" @succ-fav="updateSucc()"></Card>
                 </div>
             </Slide>
+
             <template #addons>
                 <Navigation />
                 <button class="bg-indigo-300 rounded-full text-indigo-600 p-2 mr-1 mt-2"
@@ -39,11 +47,19 @@
 
         <Carousel ref="carouselSeries" v-bind="settings" :breakpoints="breakpoints" v-show="visibleTv"
             @slide-start="({ slidingToIndex }) => slidingToIndex === carouselSeries.data.maxSlide.value ? updateSeries() : null">
-            <Slide v-for="item in tv" :key="item.id">
+
+            <Slide v-if="tv.length == 0" v-for="i in 10" :key="i">
+                <div class="carousel__item flex flex-col justify-between p-">
+                    <LoadingCarousel></LoadingCarousel>
+                </div>
+            </Slide>
+
+            <Slide v-else v-for="item in tv" :key="item.id">
                 <div class="carousel__item flex flex-col justify-between p-2">
                     <Card :item="item" type="serie tv" @fail-fav="updateFail()" @succ-fav="updateSucc()"></Card>
                 </div>
             </Slide>
+
             <template #addons>
                 <Navigation />
                 <button class="bg-indigo-300 rounded-full text-indigo-600 p-2 mr-1 mt-2"
@@ -70,11 +86,19 @@
 
         <Carousel ref="carouselUpcoming" v-bind="settings" :breakpoints="breakpoints" v-show="visibleUpcoming"
             @slide-start="({ slidingToIndex }) => slidingToIndex === carouselUpcoming.data.maxSlide.value ? updateUpComing() : null">
-            <Slide v-for="item in upcoming" :key="item.id">
+
+            <Slide v-if="upcoming.length == 0" v-for="i in 10" :key="i">
+                <div class="carousel__item flex flex-col justify-between p-">
+                    <LoadingCarousel></LoadingCarousel>
+                </div>
+            </Slide>
+
+            <Slide v-else v-for="item in upcoming" :key="item.id">
                 <div class="carousel__item flex flex-col justify-between p-2">
                     <Card :item="item" type="upcoming" @fail-fav="updateFail()" @succ-fav="updateSucc()"></Card>
                 </div>
             </Slide>
+
             <template #addons>
                 <Navigation />
                 <button class="bg-indigo-300 rounded-full text-indigo-600 p-2 mr-1 mt-2"
@@ -117,6 +141,7 @@ import PageNav from "@/components/PageNav.vue";
 import Card from "@/components/Card.vue";
 import ToastFail from "@/components/ToastFail.vue";
 import ToastSuccess from "@/components/ToastSuccess.vue";
+import LoadingCarousel from "@/components/LoadingCarousel.vue";
 import { useUserStore } from "@/stores/user";
 import 'vue3-carousel/dist/carousel.css';
 import { Carousel, Slide, Navigation } from 'vue3-carousel';
@@ -222,7 +247,8 @@ export default {
         PageNav,
         Card,
         ToastFail,
-        ToastSuccess
+        ToastSuccess,
+        LoadingCarousel
     }
 }
 </script>
