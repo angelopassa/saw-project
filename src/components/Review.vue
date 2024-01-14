@@ -26,7 +26,7 @@
                         <select id="season-list" v-model="choiceSeason" :disabled="loading || noNet" @change="getEpisodes()"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                             <option v-for="season in listSeason" :value="season.season_number"
-                                :disabled="choice == 'episode' && noNetSeasons[season.season_number]">
+                                :disabled="noNetSeasons[season.season_number]">
                                 {{ season.name }}
                             </option>
                         </select>
@@ -275,8 +275,7 @@ export default {
                     this.listEpisodesLocal[this.choiceSeason]
                 else {
                     this.noNetSeasons[this.choiceSeason] = true;
-                    if (this.choice === 'episode')
-                        this.choiceSeason = Number.parseInt(Object.entries(this.noNetSeasons).find(([idx, flag]) => !flag)![0]);
+                    this.choiceSeason = Number.parseInt(Object.entries(this.noNetSeasons).find(([idx, flag]) => !flag)![0]);
                     return;
                 }
                 this.$emit('addSeasonInfo', this.choiceSeason, res);
