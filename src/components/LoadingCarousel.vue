@@ -1,6 +1,6 @@
 <template>
     <div role="status" class="space-y-4 animate-pulse">
-        <div class="flex items-center justify-center w-full h-72 bg-gray-300 rounded sm:w-52">
+        <div class="flex items-center justify-center h-72 bg-gray-300 rounded w-full">
             <svg class="w-10 h-10 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor" viewBox="0 0 20 18">
                 <path
