@@ -10,18 +10,13 @@ cleanupOutdatedCaches();
 
 precacheAndRoute(self.__WB_MANIFEST);
 
-setDefaultHandler(new NetworkFirst());
+setDefaultHandler(new NetworkOnly());
 offlineFallback();
 
 registerRoute(new NavigationRoute(
   createHandlerBoundToURL('index.html'),
   { denylist: [new RegExp("/profile"), new RegExp("/search"), new RegExp("/signup"), new RegExp("/restore")] }
 ));
-
-registerRoute(
-  ({ url }) => url.origin.startsWith('https://image.tmdb.org'),
-  new NetworkOnly()
-);
 
 registerRoute(
   ({ url }) => url.origin.startsWith('https://api.themoviedb.org'),

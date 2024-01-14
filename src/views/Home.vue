@@ -8,8 +8,8 @@
         <Carousel ref="carouselFilm" v-bind="settings" :breakpoints="breakpoints" v-show="visibleFilm"
             @slide-start="({ slidingToIndex }) => slidingToIndex === carouselFilm.data.maxSlide.value ? updateFilm() : null">
 
-            <Slide v-if="movies.length == 0" v-for="i in 10" :key="i">
-                <div class="carousel__item flex flex-col justify-between p-">
+            <Slide v-if="movies.length != 0" v-for="i in 10" :key="i">
+                <div class="carousel__item flex flex-col justify-between p-2">
                     <LoadingCarousel></LoadingCarousel>
                 </div>
             </Slide>
@@ -49,7 +49,7 @@
             @slide-start="({ slidingToIndex }) => slidingToIndex === carouselSeries.data.maxSlide.value ? updateSeries() : null">
 
             <Slide v-if="tv.length == 0" v-for="i in 10" :key="i">
-                <div class="carousel__item flex flex-col justify-between p-">
+                <div class="carousel__item flex flex-col justify-between p-2">
                     <LoadingCarousel></LoadingCarousel>
                 </div>
             </Slide>
@@ -88,7 +88,7 @@
             @slide-start="({ slidingToIndex }) => slidingToIndex === carouselUpcoming.data.maxSlide.value ? updateUpComing() : null">
 
             <Slide v-if="upcoming.length == 0" v-for="i in 10" :key="i">
-                <div class="carousel__item flex flex-col justify-between p-">
+                <div class="carousel__item flex flex-col justify-between p-2">
                     <LoadingCarousel></LoadingCarousel>
                 </div>
             </Slide>
