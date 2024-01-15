@@ -45,8 +45,8 @@ export const useUserStore = defineStore('user', {
                 let res = await signInWithEmailAndPassword(auth, email, password);
 
                 if (res) {
-                    getUsersReviews();
                     getUsersFav();
+                    getUsersReviews();
 
                     Notification.requestPermission()
                         .then((res) => {
