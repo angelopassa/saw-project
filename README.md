@@ -3,7 +3,7 @@
 *Your Movie Lib* è una web app a tema cinematografico che consente di cercare e visualizzare
 informazioni su film, serie tv e persone del settore. L'app ha anche una funzione di blog, in
 quanto disponendo di un account è possibile aggiungere un media ai preferiti e/o scrivere recensioni
-per film, serie tv (nello specifico è possibile valutare non solo la serie nella sua interezza ma anche le
+per film e serie tv (nello specifico è possibile valutare non solo la serie nella sua interezza ma anche le
 singole stagioni ed episodi che la compongono). Fra i media aggiunti ai preferiti è possibile specificare
 la preferenza sulle notifiche, la quale indica la volontà dell'utente di ricevere notifiche quando una nuova recensione
 su quel media è stata aggiunta oppure se una già esistente è stata aggiornata.
