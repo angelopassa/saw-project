@@ -179,7 +179,7 @@ export default {
         this.loading = false;
     },
     updated() {
-        if (this.idcomment && !this.loading && !this.loaded) {
+        if ((this.idcomment || this.$route.hash === '#commentmovie') && !this.loading && !this.loaded) {
             document.getElementById('commentmovie')!.scrollIntoView({
                 behavior: "smooth"
             });

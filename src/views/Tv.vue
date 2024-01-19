@@ -291,7 +291,7 @@ export default {
         this.loading = false;
     },
     updated() {
-        if (this.idcomment && !this.loading && !this.loaded) {
+        if ((this.idcomment || this.$route.hash === '#commentv') && !this.loading && !this.loaded) {
             document.getElementById('commentv')!.scrollIntoView({
                 behavior: "smooth"
             });
